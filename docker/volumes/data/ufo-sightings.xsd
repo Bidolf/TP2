@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:element name="Sightings">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Sighting" minOccurs="1" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element ref="DateTimeEncounter" />
+                            <xs:element ref="DateDocumented" />
+                            <xs:element ref="Location" />
+                            <xs:element ref="UFOShape" />
+                            <xs:element ref="EncounterDuration" />
+                            <xs:element ref="Description" />
+                        </xs:sequence>
+                        <xs:attribute name="id" type="xs:ID" use="required" />
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+
+    <xs:element name="DateTimeEncounter">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Date" />
+                <xs:element ref="Time" />
+                <xs:element ref="Season" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Date" type="xs:date" />
+    <xs:element name="Time" type="xs:time" />
+    <xs:element name="Season" type="SeasonType" />
+    
+    <xs:simpleType name="SeasonType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Spring" />
+            <xs:enumeration value="Summer" />
+            <xs:enumeration value="Autumn" />
+            <xs:enumeration value="Winter" />
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:element name="DateDocumented" type="xs:date" />
+
+
+    <xs:element name="Location">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Country" />
+                <xs:element ref="Region" />
+                <xs:element ref="Locale" />
+                <xs:element ref="Latitude" />
+                <xs:element ref="Longitude" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Country" type="xs:string" />
+    <xs:element name="Region" type="xs:string" />
+    <xs:element name="Locale" type="xs:string" />
+    <xs:element name="Latitude" type="xs:double" />
+    <xs:element name="Longitude" type="xs:double" />
+
+
+    <xs:element name="UFOShape" type="xs:string" />
+
+
+    <xs:element name="EncounterDuration">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Text" type="xs:string" />
+                <xs:element ref="SecondsApproximate" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="SecondsApproximate" type="xs:long" />
+
+
+    <xs:element name="Description" type="xs:string" />
+
+
+</xs:schema>

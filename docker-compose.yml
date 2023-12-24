@@ -28,6 +28,7 @@ services:
       - ./src/daemon/importer:/usr/src/app
       - ./docker/volumes/xml:/xml
       - ./docker/volumes/csv:/csv
+      - ./docker/volumes/data:/data
     environment:
       USE_DEV_MODE: ${USE_DEV_MODE}
       NUM_XML_PARTS: ${NUM_XML_PARTS}

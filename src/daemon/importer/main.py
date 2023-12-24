@@ -2,6 +2,8 @@ import asyncio
 import time
 import uuid
 
+import psycopg2
+
 import os
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler, FileCreatedEvent
@@ -18,7 +20,9 @@ def generate_unique_file_name(directory):
 def convert_csv_to_xml(in_path, out_path):
     converter = CSVtoXMLConverter(in_path)
     file = open(out_path, "w")
-    file.write(converter.to_xml_str())
+    xml_content = converter.to_xml_str()
+    file.write(xml_content)
+    return xml_content
 
 class CSVHandler(FileSystemEventHandler):
     def __init__(self, input_path, output_path):
@@ -33,25 +37,102 @@ class CSVHandler(FileSystemEventHandler):
 
     async def convert_csv(self, csv_path):
         # here we avoid converting the same file again
-        # !TODO: check converted files in the database
         if csv_path in await self.get_converted_files():
             return
 
-        print(f"new file to convert: '{csv_path}'")
+        print(f"new file to convert: '{csv_path}'", flush=True)
+        csv_file_size = os.path.getsize(csv_path)
+        print(f"csv file size: '{csv_path}'", flush=True)
 
         # we generate a unique file name for the XML file
         xml_path = generate_unique_file_name(self._output_path)
 
         # we do the conversion
-        # !TODO: once the conversion is done, we should updated the converted_documents tables
-        convert_csv_to_xml(csv_path, xml_path)
-        print(f"new xml file generated: '{xml_path}'")
+        xml_content = convert_csv_to_xml(csv_path, xml_path)
+        print(f"new xml file generated: '{xml_path}'", flush=True)
 
-        # !TODO: we should store the XML document into the imported_documents table
+        await self.add_new_converted_document(csv_path, csv_file_size, xml_path)
+
+        await self.import_xml_document(xml_path, xml_content)
 
     async def get_converted_files(self):
-        # !TODO: you should retrieve from the database the files that were already converted before
-        return []
+        connection = None
+        cursor = None
+
+        converted_documents = []
+
+        try:
+            connection = psycopg2.connect(user="is",
+                                          password="is",
+                                          host="db-xml",
+                                          port="5432",
+                                          database="is")
+
+            cursor = connection.cursor()
+            cursor.execute("SELECT src FROM converted_documents")
+
+            for document in cursor:
+                converted_documents.append(document)
+
+        except (Exception, psycopg2.Error) as error:
+            print("Failed to fetch data", error, flush=True)
+
+        finally:
+            if connection:
+                cursor.close()
+                connection.close()
+
+        return converted_documents
+
+    async def add_new_converted_document(self, csv_path, csv_file_size, xml_path):
+        connection = None
+        cursor = None
+
+        try:
+            connection = psycopg2.connect(user="is",
+                                          password="is",
+                                          host="db-xml",
+                                          port="5432",
+                                          database="is")
+
+            cursor = connection.cursor()
+            cursor.execute("INSERT INTO converted_documents(src, file_size, dst) VALUES (%s, %s, %s)",
+                           (csv_path, csv_file_size, xml_path))
+            print(f"{csv_path} was inserted in the converted_documents table", flush=True)
+
+        except (Exception, psycopg2.Error) as error:
+            print(f"Failed to insert {csv_path} in the converted_documents table", error, flush=True)
+
+        finally:
+            if connection:
+                cursor.close()
+                connection.close()
+
+    async def import_xml_document(self, xml_path, xml_content):
+        connection = None
+        cursor = None
+
+        try:
+            connection = psycopg2.connect(user="is",
+                                          password="is",
+                                          host="db-xml",
+                                          port="5432",
+                                          database="is")
+
+            cursor = connection.cursor()
+            cursor.execute("INSERT INTO imported_documents (file_name, xml, active) VALUES (%s, %s,TRUE)",
+                           (xml_path, xml_content))
+            connection.commit()
+            print(f"{xml_path} was inserted in the imported_documents table", flush=True)
+
+        except (Exception, psycopg2.Error) as error:
+            print(f"Failed to insert {xml_path} in the imported_documents table", error)
+
+        finally:
+            if connection:
+                cursor.close()
+                connection.close()
+
 
     def on_created(self, event):
         if not event.is_directory and event.src_path.endswith(".csv"):
