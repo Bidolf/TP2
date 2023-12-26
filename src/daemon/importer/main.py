@@ -46,6 +46,7 @@ class CSVHandler(FileSystemEventHandler):
 
         # we generate a unique file name for the XML file
         xml_path = generate_unique_file_name(self._output_path)
+        print(f"xml file created but not generated: '{xml_path}'", flush=True)
 
         # we do the conversion
         xml_content = convert_csv_to_xml(csv_path, xml_path)
