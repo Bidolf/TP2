@@ -27,11 +27,11 @@ def retrieve_year_region(region, year, singleresult):
                 print("Data was successfully retrieved", flush=True)
                 return retrieve_info
             else:
-                print("Unable to retrieve data", flush=True)
+                print("Unable to retrieve schema", flush=True)
                 return data
         else:
-            print("Unable to retrieve data", flush=True)
+            print("Unable to retrieve schema", flush=True)
             return data
     else:
-        print("Unable to retrieve data", flush=True)
+        print("Unable to retrieve schema", flush=True)
         return data

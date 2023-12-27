@@ -2,21 +2,21 @@
 
 services:
 
-  # Database to store XML data
+  # Database to store XML schema
   db-xml:
     container_name: db-xml
     build: docker/images/db/xml
     volumes:
-      - xml-data:/var/lib/postgresql/shared-data/
+      - xml-schema:/var/lib/postgresql/shared-schema/
     ports:
       - "${EXP_PORT_PG_XML}:5432"
 
-  # Database to store Relational data
+  # Database to store Relational schema
   db-rel:
     container_name: db-rel
     build: docker/images/db/rel
     volumes:
-      - rel-data:/var/lib/postgresql/shared-data/
+      - rel-schema:/var/lib/postgresql/shared-schema/
     ports:
       - "${EXP_PORT_PG_REL}:5432"
 
@@ -28,14 +28,13 @@ services:
       - ./src/daemon/importer:/usr/src/app
       - ./docker/volumes/xml:/xml
       - ./docker/volumes/csv:/csv
-      - ./docker/volumes/data:/data
     environment:
       USE_DEV_MODE: ${USE_DEV_MODE}
       NUM_XML_PARTS: ${NUM_XML_PARTS}
     depends_on:
       - db-xml
 
-  # Container that automatically migrates data from db-xml to db-rel
+  # Container that automatically migrates schema from db-xml to db-rel
   migrator:
     container_name: migrator
     build: docker/images/python
@@ -49,7 +48,7 @@ services:
       - db-xml
       - db-rel
 
-  # Container that automatically migrates data from db-xml to db-rel
+  # Container that automatically migrates schema from db-xml to db-rel
   gis-updater:
     container_name: gis-updater
     build: docker/images/python

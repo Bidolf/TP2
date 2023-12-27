@@ -103,7 +103,7 @@ class CSVHandler(FileSystemEventHandler):
                 converted_documents.append(document)
 
         except (Exception, psycopg2.Error) as error:
-            print("Failed to fetch data", error, flush=True)
+            print("Failed to fetch schema", error, flush=True)
 
         finally:
             if connection:

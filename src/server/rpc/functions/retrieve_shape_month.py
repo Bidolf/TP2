@@ -33,11 +33,11 @@ def retrieve_shape_month(shape, month, singleresult):
                 print("Data was successfully retrieved", flush=True)
                 return grouped_info
             else:
-                print("Unable to retrieve data", flush=True)
+                print("Unable to retrieve schema", flush=True)
                 return data
         else:
-            print("Unable to retrieve data", flush=True)
+            print("Unable to retrieve schema", flush=True)
             return data
     else:
-        print("Unable to retrieve data", flush=True)
+        print("Unable to retrieve schema", flush=True)
         return data

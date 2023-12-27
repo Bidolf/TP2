@@ -11,7 +11,7 @@ class CSVtoXMLConverter:
     def __init__(self, csv_path):
         self._reader = CSVReader(csv_path)
 
-        self._xsd_path = "/data/ufo-sightings.xsd"
+        self._xsd_path = "/schema/ufo-sightings.xsd"
 
         with open(self._xsd_path, 'r') as xsd:
             self._schema = ET.XMLSchema(ET.parse(xsd))
@@ -58,7 +58,7 @@ class CSVtoXMLConverter:
         xml_parts_str = []
 
         # converter o xml em cada parte para string
-        print("Parsing xml data of each part...", flush=True)
+        print("Parsing xml schema of each part...", flush=True)
         for part in xml_parts:
             xml_str = ET.tostring(part, encoding='utf8', method='xml').decode()
 
@@ -70,9 +70,9 @@ class CSVtoXMLConverter:
 
     def to_xml_str(self):
         xml_str = ET.tostring(self.to_xml(), encoding='utf8', method='xml').decode()
-        print("Parsing xml data...")
+        print("Parsing xml schema...")
         dom = md.parseString(xml_str)
-        print("Returning xml data...", flush=True)
+        print("Returning xml schema...", flush=True)
         return dom.toprettyxml()
 
 
@@ -109,7 +109,7 @@ class CSVtoXMLConverter:
             season = ET.SubElement(date_time_encounter, "Season")
             season.text = row.get('Season')
 
-            # a data no ficheiro .csv está no formato "mm/dd/aaaa"
+            # a schema no ficheiro .csv está no formato "mm/dd/aaaa"
             # mas o datatype Date do xml é no formato "aaaa-mm-dd"
             date_documented = ET.SubElement(sighting, "DateDocumented")
             date_documented_string = row.get('date_documented')

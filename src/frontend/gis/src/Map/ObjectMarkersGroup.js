@@ -72,7 +72,7 @@ function ObjectMarkersGroup() {
         }
     }, []);
 
-    /* Updates the data for the current bounds */
+    /* Updates the schema for the current bounds */
     useEffect(() => {
         console.log(`> getting data for bounds`, bounds);
         setGeom(DEMO_DATA);

@@ -23,7 +23,7 @@ def retrieve_xml_group_by_file():
         print(f"XML was obtained successfully ", flush=True)
 
     except (Exception, psycopg2.Error) as error:
-        print("Failed to retrieve data", error, flush=True)
+        print("Failed to retrieve schema", error, flush=True)
 
     finally:
         if connection:
