@@ -1,28 +1,51 @@
+import os, sys
 import asyncio
 import time
 import uuid
 
 import psycopg2
 
-import os
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler, FileCreatedEvent
 
 from utils.to_xml_converter import CSVtoXMLConverter
 
+NUM_XML_PARTS = int(sys.argv[1]) if len(sys.argv) >= 2 else 1
+
+
 def get_csv_files_in_input_folder():
     return [os.path.join(dp, f) for dp, dn, filenames in os.walk(CSV_INPUT_PATH) for f in filenames if
             os.path.splitext(f)[1] == '.csv']
 
+
 def generate_unique_file_name(directory):
     return f"{directory}/{str(uuid.uuid4())}.xml"
 
-def convert_csv_to_xml(in_path, out_path):
+
+def convert_csv_to_xml(in_path, file_name, num_xml_parts):
+    """
+    :param in_path: Path of CSV file
+    :param directory: Directory of where to put the resulting XML files
+    :param num_xml_parts: How many XML files will be generated
+    :return: A tuple of (file_path, xml_content)
+    """
     converter = CSVtoXMLConverter(in_path)
-    file = open(out_path, "w")
-    xml_content = converter.to_xml_str()
-    file.write(xml_content)
-    return xml_content
+    xml_files = []
+    xml_parts_str = converter.to_xml_parts_str(num_xml_parts)
+
+    for i, part in enumerate(xml_parts_str):
+        file_path = f"{file_name}_{i}.xml"
+        file = open(file_path, "w")
+        file.write(part)
+
+        xml_files.append((file_path, part))
+
+    return xml_files
+    # file = open(out_path, "w")
+    # xml_content = converter.to_xml_str()
+    # file.write(xml_content)
+    # return xml_content
+
 
 class CSVHandler(FileSystemEventHandler):
     def __init__(self, input_path, output_path):
@@ -44,17 +67,21 @@ class CSVHandler(FileSystemEventHandler):
         csv_file_size = os.path.getsize(csv_path)
         print(f"csv file size: '{csv_path}'", flush=True)
 
-        # we generate a unique file name for the XML file
-        xml_path = generate_unique_file_name(self._output_path)
-        print(f"xml file created but not generated: '{xml_path}'", flush=True)
+        # filename includes the directory where the xml files will be generated
+        xml_file_directory_name = f"{self._output_path}/{str(uuid.uuid4())}"
 
         # we do the conversion
-        xml_content = convert_csv_to_xml(csv_path, xml_path)
-        print(f"new xml file generated: '{xml_path}'", flush=True)
+        # xml_files is an array of tuples of (file_path, xml_content)
+        # first element of each tuple is the file's name with the part's number and the .xml suffix
+        # second element is the file's content
+        xml_files = convert_csv_to_xml(csv_path, xml_file_directory_name, NUM_XML_PARTS)
+        print(f"new xml files have been generated", flush=True)
 
-        await self.add_new_converted_document(csv_path, csv_file_size, xml_path)
-
-        await self.import_xml_document(xml_path, xml_content)
+        # store converted document to public.converted_documents in pg-xml
+        await self.add_new_converted_document(csv_path, csv_file_size, xml_file_directory_name)
+        # import xml files to public.imported_documents in pg-xml
+        for xml_path, xml_content in xml_files:
+            await self.import_xml_document(xml_path, xml_content)
 
     async def get_converted_files(self):
         connection = None
@@ -99,10 +126,10 @@ class CSVHandler(FileSystemEventHandler):
             cursor = connection.cursor()
             cursor.execute("INSERT INTO converted_documents(src, file_size, dst) VALUES (%s, %s, %s)",
                            (csv_path, csv_file_size, xml_path))
-            print(f"{csv_path} was inserted in the converted_documents table", flush=True)
+            print(f"{xml_path} was inserted in the converted_documents table", flush=True)
 
         except (Exception, psycopg2.Error) as error:
-            print(f"Failed to insert {csv_path} in the converted_documents table", error, flush=True)
+            print(f"Failed to insert {xml_path} in the converted_documents table", error, flush=True)
 
         finally:
             if connection:
@@ -133,7 +160,6 @@ class CSVHandler(FileSystemEventHandler):
             if connection:
                 cursor.close()
                 connection.close()
-
 
     def on_created(self, event):
         if not event.is_directory and event.src_path.endswith(".csv"):

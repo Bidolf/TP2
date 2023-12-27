@@ -11,8 +11,8 @@ CREATE TABLE public.imported_documents (
 CREATE TABLE public.converted_documents (
     id              serial PRIMARY KEY,
     src             VARCHAR(250) UNIQUE NOT NULL,
-    file_size       BIGINT NOT NULL,
     dst             VARCHAR(250) UNIQUE NOT NULL,
+    file_size       BIGINT NOT NULL,
 	created_on      TIMESTAMP NOT NULL DEFAULT NOW(),
 	updated_on      TIMESTAMP NOT NULL DEFAULT NOW()
 );

@@ -37,3 +37,9 @@ importer
 		once the conversion is done, we should updated the converted_documents tables
 		we should store the XML document into the imported_documents table
 		you should retrieve from the database the files that were already converted before
+		
+		
+	csv agora cria vários xml
+	
+	NÃO CONSEGUI POR O "encoding='utf-8'" NO TOPO DOS FICHEIROS XML
+	

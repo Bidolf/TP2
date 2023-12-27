@@ -1,3 +1,4 @@
+import math
 from datetime import datetime
 import xml.dom.minidom as md
 from lxml import etree as ET
@@ -14,6 +15,58 @@ class CSVtoXMLConverter:
 
         with open(self._xsd_path, 'r') as xsd:
             self._schema = ET.XMLSchema(ET.parse(xsd))
+
+    def to_xml_parts(self, num_xml_parts):
+        csv = []
+        csv_parts = [[]]
+        xml_parts = []
+
+        print("Reading csv file...", flush=True)
+        for row in self._reader.loop():
+            csv.append(row)
+
+        # quantas linhas em média é que cada ficheiro deve ter
+        rows_per_part = math.ceil(len(csv)/num_xml_parts)
+
+        print(f"rows per part: {rows_per_part}  -  total rows: {len(csv)}", flush=True)
+
+        # adicionar as linhas a cada parte
+        part_index = 0
+        for i, row in enumerate(csv):
+            csv_parts[part_index].append(row)
+            # se já tem linhas suficientes,
+            # começa a adicionar linhas à próxima parte
+            if (((i+1) % rows_per_part) < 1):
+                print(f"row {i}  -  part_index {part_index}", flush=True)
+                part_index += 1
+                csv_parts.append([])
+
+        # gerar xml para cada parte
+        print("Creating xml file structures...", flush=True)
+        for part in csv_parts:
+            xml_tree = self.create_element_tree(part)
+
+            xml_tree = xml_tree.getroot()
+
+            if (self.validate_xml(xml_tree)):
+                xml_parts.append(xml_tree)
+
+        return xml_parts
+
+    def to_xml_parts_str(self, num_xml_parts):
+        xml_parts = self.to_xml_parts(num_xml_parts)
+        xml_parts_str = []
+
+        # converter o xml em cada parte para string
+        print("Parsing xml data of each part...", flush=True)
+        for part in xml_parts:
+            xml_str = ET.tostring(part, encoding='utf8', method='xml').decode()
+
+            dom = md.parseString(xml_str)
+            xml_parts_str.append(dom.toprettyxml())
+
+        return xml_parts_str
+
 
     def to_xml_str(self):
         xml_str = ET.tostring(self.to_xml(), encoding='utf8', method='xml').decode()
