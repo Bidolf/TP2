@@ -43,3 +43,13 @@ importer
 	
 	NÃO CONSEGUI POR O "encoding='utf-8'" NO TOPO DOS FICHEIROS XML
 	
+	
+rpc-server
+	corrigi os comandos sql no
+		db_addfiles, db_delete
+		db_exists
+		retrieve xml, retrieve xml group by file
+		visualize table
+		
+	não corrigi o import_filee o drop_table pq acho que não vai ser usado
+		

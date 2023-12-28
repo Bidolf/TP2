@@ -13,7 +13,7 @@ def db_available_files_delete():
                                       database="is")
 
         cursor = connection.cursor()
-        cursor.execute('SELECT file_name FROM "xml_table" WHERE active = TRUE')
+        cursor.execute('SELECT file_name FROM imported_documents WHERE active = TRUE')
         file_names = cursor.fetchall()
 
         for file_name in file_names:
@@ -39,10 +39,10 @@ def db_delete(file):
                                       database="is")
 
         cursor = connection.cursor()
-        cursor.execute('SELECT 1 FROM "xml_table" WHERE file_name = %s', (file,))
+        cursor.execute('SELECT 1 FROM imported_documents WHERE file_name = %s', (file,))
         file_delete = cursor.fetchone()[0]
         if file_delete:
-            cursor.execute('UPDATE "xml_table" SET active = FALSE WHERE file_name = %s', (file,))
+            cursor.execute('UPDATE imported_documents SET active = FALSE WHERE file_name = %s', (file,))
             connection.commit()
             print(f"File {file} has been soft-deleted", flush=True)
         else:

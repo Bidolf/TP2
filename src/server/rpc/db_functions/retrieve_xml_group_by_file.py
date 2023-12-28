@@ -14,7 +14,7 @@ def retrieve_xml_group_by_file():
 
         cursor = connection.cursor()
         obtain_xml = """
-                            SELECT file_content, file_name FROM "xml_table" WHERE active = TRUE 
+                            SELECT xml, file_name FROM imported_documents WHERE active = TRUE 
                             """
         cursor.execute(obtain_xml)
         results_xml = cursor.fetchall()

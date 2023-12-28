@@ -14,7 +14,7 @@ def retrieve_xml():
 
         cursor = connection.cursor()
         obtain_xml = """
-                            SELECT file_content FROM "xml_table" WHERE active = TRUE
+                            SELECT xml FROM imported_documents WHERE active = TRUE
                             """
         cursor.execute(obtain_xml)
         results_xml = cursor.fetchall()

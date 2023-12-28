@@ -13,7 +13,7 @@ def db_available_files_add():
                                       database="is")
 
         cursor = connection.cursor()
-        cursor.execute('SELECT file_name FROM "xml_table" WHERE active = FALSE')
+        cursor.execute('SELECT file_name FROM imported_documents WHERE active = FALSE')
         file_names = cursor.fetchall()
 
         for file_name in file_names:
@@ -39,10 +39,10 @@ def db_addfiles(file):
                                       database="is")
 
         cursor = connection.cursor()
-        cursor.execute('SELECT 1 FROM "xml_table" WHERE file_name = %s', (file,))
+        cursor.execute('SELECT 1 FROM imported_documents WHERE file_name = %s', (file,))
         file_add = cursor.fetchone()[0]
         if file_add:
-            cursor.execute('UPDATE "xml_table" SET active = TRUE WHERE file_name = %s', (file,))
+            cursor.execute('UPDATE imported_documents SET active = TRUE WHERE file_name = %s', (file,))
             connection.commit()
             print(f"File {file} has been added", flush=True)
         else:
