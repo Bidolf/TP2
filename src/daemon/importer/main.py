@@ -11,6 +11,8 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler, FileCreatedEvent
 from to_xml_converter import CSVtoXMLConverter
 import xml.etree.ElementTree as ET
+import xml.dom.minidom as md
+from lxml import etree as ET
 
 
 def get_csv_files_in_input_folder():
@@ -23,26 +25,42 @@ def generate_unique_file_name(directory):
 
 
 def convert_csv_to_xml(in_path, out_path, num_xml_parts, xsd_path):
-    converter = CSVtoXMLConverter(in_path, xsd_path)
-    xml_file = converter.to_xml_str()
-    root = ET.fromstring(xml_file)
-    total_elements = len(root)
-    elements_per_part = total_elements // num_xml_parts
-    list_xml_path = []
+    try:
+        converter = CSVtoXMLConverter(in_path, xsd_path)
+        xml_str = converter.to_xml_str()
 
-    for i in range(num_xml_parts):
-        new_root = ET.Element(root.tag)
-        for element in root[i * elements_per_part: (i + 1) * elements_per_part]:
-            new_root.append(element)
-        new_tree = ET.ElementTree(new_root)
-        # we generate a unique file name for the XML file
-        xml_path = generate_unique_file_name(out_path)
-        print(f"Writing XML part: {xml_path}...", flush=True)
-        with open(xml_path, "w", encoding='utf-8') as f:
-            new_tree.write(f, encoding='utf-8')
-        print(f"XML part has been written", flush=True)
-        list_xml_path.append(xml_path)
-    return list_xml_path
+        root = ET.fromstring(xml_str)
+
+        total_elements = len(root)
+        print(total_elements)
+        elements_per_part = total_elements // num_xml_parts
+        list_xml_path = []
+
+        for i in range(num_xml_parts):
+            new_root = ET.Element(root.tag)
+            for element in root[i * elements_per_part: (i + 1) * elements_per_part]:
+                new_root.append(element)
+
+            new_tree = ET.ElementTree(new_root)
+            xml_str = ET.tostring(new_root, encoding='utf-8', method='xml').decode()
+            dom = md.parseString(xml_str)
+            xml_file = dom.toprettyxml()
+
+            # Generate a unique file name for the XML file
+            xml_path = generate_unique_file_name(out_path)
+            print(f"Writing XML part: {xml_path}...", flush=True)
+
+            with open(xml_path, "w", encoding='utf-8') as f:
+                f.write(xml_file)
+
+            print(f"XML part has been written", flush=True)
+            list_xml_path.append(xml_path)
+
+        return list_xml_path
+
+    except Exception as e:
+        print(f"Error during XML conversion: {e}")
+        raise
 
 
 def update_converted_documents_table(csv_path, list_xml_path):
