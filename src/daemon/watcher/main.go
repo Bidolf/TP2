@@ -36,10 +36,13 @@ func listXMLFiles() {
 }
 
 func main() {
-    const dbConnectionString = "postgres://is:is@db-xml:5432/is?sslmode=disable"
-    const rabbitMQURL = fmt.Sprintf("amqp://%s:%s@rabbitmq:5672/%s", os.Args[0], os.Args[1], os.Args[2])
+    dbConnectionString := "postgres://is:is@db-xml:5432/is?sslmode=disable"
+    rabbitMQURL := fmt.Sprintf("amqp://%s:%s@rabbitmq:5672/%s", os.Args[0], os.Args[1], os.Args[2])
+    queueName := "new_entries_queue"
     // args for this main are $RABBITMQ_DEFAULT_USER, $RABBITMQ_DEFAULT_PASS, $RABBITMQ_DEFAULT_VHOST, and $POLLING_FREQ
 
+    fmt.Printf("%s",dbConnectionString)
+    fmt.Printf("%s",rabbitMQURL)
 	// Connect to RabbitMQ
 	rabbitConn, err := amqp.Dial(rabbitMQURL)
 	if err != nil {
