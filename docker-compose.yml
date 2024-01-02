@@ -7,7 +7,7 @@ services:
     container_name: db-xml
     build: docker/images/db/xml
     volumes:
-      - xml-schema:/var/lib/postgresql/shared-schema/
+      - xml-data:/var/lib/postgresql/shared-data/
     ports:
       - "${EXP_PORT_PG_XML}:5432"
 
@@ -16,7 +16,7 @@ services:
     container_name: db-rel
     build: docker/images/db/rel
     volumes:
-      - rel-schema:/var/lib/postgresql/shared-schema/
+      - rel-data:/var/lib/postgresql/shared-data/
     ports:
       - "${EXP_PORT_PG_REL}:5432"
 

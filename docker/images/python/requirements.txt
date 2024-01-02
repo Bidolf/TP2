@@ -8,3 +8,5 @@ flask-magql==1.0.0
 lxml
 datetime
 aiohttp
+daemon
+lockfile
