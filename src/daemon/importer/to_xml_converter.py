@@ -35,9 +35,8 @@ class CSVtoXMLConverter:
         else:
             print("Dataset has not been validated", flush=True)
 
-
     def validate_xml(self, tree):
-        is_valid = self._schema.assertValid(tree)
+        is_valid = self._schema.validate(tree)
         return is_valid
 
     def create_element_tree(self, csv):
@@ -46,7 +45,6 @@ class CSVtoXMLConverter:
         ufo_shapes = ET.SubElement(root, 'Ufo-shapes')
         ufo_shapes_dict = {}
         count = 0
-        countsight=0
 
         for row in csv:
             if row.get('UFO_shape') not in ufo_shapes_dict:
@@ -58,8 +56,7 @@ class CSVtoXMLConverter:
             else:
                 ufo_shape_id = next(key for key, value in ufo_shapes_dict.items() if key == row.get('UFO_shape'))
 
-            sighting = ET.SubElement(sightings, "Sighting", id="_" + str(countsight), ufo_shape_ref="_" + str(ufo_shape_id))
-            countsight += 1
+            sighting = ET.SubElement(sightings, "Sighting", id="_" + row.get(''), ufo_shape_ref="_" + str(ufo_shape_id))
 
             date_time_encounter = ET.SubElement(sighting, "DateTimeEncounter")
             date = ET.SubElement(date_time_encounter, "Date")

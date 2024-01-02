@@ -31,18 +31,18 @@ def convert_csv_to_xml(in_path, out_path, num_xml_parts, xsd_path):
 
         root = ET.fromstring(xml_str)
 
-        total_elements = len(root)
+        total_elements = len(list(root))
         print(total_elements)
         elements_per_part = total_elements // num_xml_parts
         list_xml_path = []
 
         for i in range(num_xml_parts):
             new_root = ET.Element(root.tag)
-            for element in root[i * elements_per_part: (i + 1) * elements_per_part]:
+            for element in list(root)[i * elements_per_part: (i + 1) * elements_per_part]:
                 new_root.append(element)
 
             new_tree = ET.ElementTree(new_root)
-            xml_str = ET.tostring(new_root, encoding='utf-8', method='xml').decode()
+            xml_str = ET.tostring(new_tree, encoding='utf-8', method='xml').decode()
             dom = md.parseString(xml_str)
             xml_file = dom.toprettyxml()
 
@@ -192,16 +192,16 @@ if __name__ == "__main__":
         CSVHandler(CSV_INPUT_PATH, XML_OUTPUT_PATH, NUM_XML_PARTS, XSD_PATH),
         path=CSV_INPUT_PATH,
         recursive=True)
+    observer.start()
     # Start the daemon
-    with daemon.DaemonContext(
-            pidfile=lockfile.FileLock('/var/run/csv_to_xml_daemon.pid'),
-            stderr=open('/tmp/csv_to_xml_err.log', 'w+'),
-            stdout=open('/tmp/csv_to_xml_out.log', 'w+')):
-        observer.start()
+    #with daemon.DaemonContext(
+    #        pidfile=lockfile.FileLock('/var/run/csv_to_xml_daemon.pid'),
+    #        stderr=open('/tmp/csv_to_xml_err.log', 'w+'),
+    #        stdout=open('/tmp/csv_to_xml_out.log', 'w+')):
+    try:
+        while True:
+            time.sleep(1)
+    except KeyboardInterrupt:
+        observer.stop()
+        observer.join()
 
-        try:
-            while True:
-                time.sleep(1)
-        except KeyboardInterrupt:
-            observer.stop()
-            observer.join()
