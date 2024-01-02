@@ -3,7 +3,7 @@ from .csv_to_xml_converter import CSVtoXMLConverter
 
 def xmlgeneration():
     csv_path = "/csv/ufo-sightings.csv"
-    xsd_path = "/xml/ufo-sightings.xsd"
+    xsd_path = "/xml/ufo_sightings.xsd"
     xml_path = "/xml/ufo-sightings.xml"
 
     print(f"csv file: {csv_path}", flush=True)

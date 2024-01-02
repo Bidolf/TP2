@@ -2,7 +2,6 @@ from csv import DictReader
 
 
 class CSVReader:
-
     def __init__(self, path, delimiter=',', quotechar='"'):
         self._path = path
         self._delimiter = delimiter
