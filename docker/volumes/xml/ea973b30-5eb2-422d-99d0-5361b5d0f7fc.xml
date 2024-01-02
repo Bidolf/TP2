@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Ufo><Sightings><Sighting id="_8" ufo_shape_ref="_Disk">
+			<DateTimeEncounter>
+				<Date>1966-10-10</Date>
+				<Time>20:00:00</Time>
+				<Season>Autumn</Season>
+			</DateTimeEncounter>
+			<DateDocumented>2009-03-19</DateDocumented>
+			<Location>
+				<Country>United States</Country>
+				<Region>Alabama</Region>
+				<Locale>Harrisburg</Locale>
+				<Latitude>33.5861111</Latitude>
+				<Longitude>-86.2861111</Longitude>
+			</Location>
+			<EncounterDuration>
+				<Text>3  minutes</Text>
+				<SecondsApproximate>180</SecondsApproximate>
+			</EncounterDuration>
+			<Description>Strobe Lighted disk shape object observed close&amp;#44 at low speeds&amp;#44 and low altitude in Oct 1966 in Pell City Alabama</Description>
+		</Sighting>
+		</Sightings></Ufo>

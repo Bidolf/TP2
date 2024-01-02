@@ -47,8 +47,8 @@
                     <xs:element name="EncounterDuration" type="EncounterDurationType"/>
                     <xs:element name="Description" type="xs:string"/>
                   </xs:sequence>
-                  <xs:attribute name="id" type="xs:string"/>
-                  <xs:attribute name="ufo_shape_ref" type="xs:string"/>
+                  <xs:attribute name="id" type="xs:string" use="required"/>
+                  <xs:attribute name="ufo_shape_ref" type="xs:string" use="required"/>
                 </xs:complexType>
               </xs:element>
             </xs:sequence>
@@ -61,7 +61,7 @@
                 <xs:complexType>
                   <xs:simpleContent>
                     <xs:extension base="xs:string">
-                      <xs:attribute name="id" type="xs:string"/>
+                      <xs:attribute name="id" type="xs:string" use="required"/>
                     </xs:extension>
                   </xs:simpleContent>
                 </xs:complexType>

@@ -4,13 +4,10 @@ import time
 import uuid
 import os
 from datetime import datetime
-import daemon
-import lockfile
 import psycopg2
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler, FileCreatedEvent
 from to_xml_converter import CSVtoXMLConverter
-import xml.dom.minidom as md
 from lxml import etree as ET
 
 
@@ -25,43 +22,49 @@ def generate_unique_file_name(directory):
 
 def count_elements_by_tag(element, tag_name):
     count = 0
-    for child in element.iter(tag=tag_name):
+    for _ in element.iter(tag=tag_name):
         count += 1
     return count
 
 
-def copy_element(element, parent):
-    new_element = ET.SubElement(parent, element.tag)
-    for child in element:
-        copy_element(child, new_element)
-    return new_element
+def slice_tree(original_root, qtd_elements):
+    new_root = ET.Element('Ufo')
+    sightings = ET.SubElement(new_root, 'Sightings')
 
+    sightings_to_remove = []
+    ufo_shapes_to_remove = []
 
-def slice_tree(original_root, elements_per_part):
-    new_root = ET.Element(original_root.tag)
-    a = 0
-    sightings = original_root.find("Sightings")
-    new_sightings = ET.Element("Sightings")
-    for i, child in enumerate(sightings):
-        if i < elements_per_part:
-            copy_element(child, new_sightings)
-            sightings.remove(child)
-            a = i
+    sightingss = original_root.findall('.//Sighting')
+    i = 0
+    for sighting in sightingss:
+        if i < qtd_elements:
+            sightings.append(sighting)
+            sightings_to_remove.append(sighting)
+            i += 1
+        else:
+            break
+    a = i
+    if a < qtd_elements:
+        ufo_shapes = ET.SubElement(new_root, 'Ufo-shapes')
+        ufo_shapess = original_root.findall('.//Ufo-shape')
+        for ufo_shape in ufo_shapess:
+            if a < qtd_elements:
+                ufo_shapes.append(ufo_shape)
+                ufo_shapes_to_remove.append(ufo_shape)
+                a += 1
+            else:
+                break
 
-    if len(new_sightings) > 0:
-        new_root.append(new_sightings)
-
-    if a == 0:
-        ufo_shapes = original_root.find("Ufo-shapes")
-        new_ufo_shapes = ET.Element("Ufo-shapes")
-        for i, child in enumerate(ufo_shapes):
-            if i < elements_per_part:
-                copy_element(child, new_ufo_shapes)
-                ufo_shapes.remove(child)
-
-        if len(new_ufo_shapes) > 0:
-            new_root.append(new_ufo_shapes)
-
+    for sighting_to_remove in sightings_to_remove:
+        sighting_id = sighting_to_remove.get("id")
+        element_to_remove = original_root.find(f".//Sighting[@id='{sighting_id}']")
+        if element_to_remove is not None:
+            original_root.remove(element_to_remove)
+    for ufo_shape_to_remove in ufo_shapes_to_remove:
+        ufo_shape_id = ufo_shape_to_remove.get("id")
+        element_to_remove = original_root.find(f".//Ufo-shape[@id='{ufo_shape_id}']")
+        if element_to_remove is not None:
+            original_root.remove(element_to_remove)
     return new_root
 
 
@@ -87,24 +90,20 @@ def convert_csv_to_xml(in_path, out_path, num_xml_parts, xsd_path):
         i = 0
         while i < num_xml_parts:
             if i == num_xml_parts - 1:
-                new_root = root
+                new_root = slice_tree(root, (missing_elements + elements_per_part))
             else:
                 new_root = slice_tree(root, elements_per_part)
-
             new_tree = ET.ElementTree(new_root)
-            xml_str = ET.tostring(new_tree.getroot(), encoding='utf-8', method='xml').decode()
-            dom = md.parseString(xml_str)
-            xml_file = dom.toprettyxml()
 
             # Generate a unique file name for the XML file
             xml_path = generate_unique_file_name(out_path)
             print(f"Writing XML part: {xml_path}...", flush=True)
 
-            with open(xml_path, "w", encoding='utf-8') as f:
-                f.write(xml_file)
+            new_tree.write(xml_path, xml_declaration=True, encoding='utf-8')
 
             print(f"XML part has been written", flush=True)
             list_xml_path.append(xml_path)
+            i += 1
 
         return list_xml_path
 

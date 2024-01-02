@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Ufo><Sightings><Sighting id="_9" ufo_shape_ref="_Disk">
+			<DateTimeEncounter>
+				<Date>1966-10-10</Date>
+				<Time>21:00:00</Time>
+				<Season>Autumn</Season>
+			</DateTimeEncounter>
+			<DateDocumented>2005-05-11</DateDocumented>
+			<Location>
+				<Country>United States</Country>
+				<Region>Florida</Region>
+				<Locale>Live Oak</Locale>
+				<Latitude>30.2947222</Latitude>
+				<Longitude>-82.9841667</Longitude>
+			</Location>
+			<EncounterDuration>
+				<Text>several minutes</Text>
+				<SecondsApproximate>120</SecondsApproximate>
+			</EncounterDuration>
+			<Description>Saucer zaps energy from powerline as my pregnant mother receives mental signals not to pass info</Description>
+		</Sighting>
+		<Sighting id="_10" ufo_shape_ref="_Circle">
+			<DateTimeEncounter>
+				<Date>1968-10-10</Date>
+				<Time>13:00:00</Time>
+				<Season>Autumn</Season>
+			</DateTimeEncounter>
+			<DateDocumented>2003-10-31</DateDocumented>
+			<Location>
+				<Country>United States</Country>
+				<Region>California</Region>
+				<Locale>Hawthorne</Locale>
+				<Latitude>33.9163889</Latitude>
+				<Longitude>-118.3516667</Longitude>
+			</Location>
+			<EncounterDuration>
+				<Text>5 min.</Text>
+				<SecondsApproximate>300</SecondsApproximate>
+			</EncounterDuration>
+			<Description>ROUND &amp;#44 ORANGE &amp;#44 WITH WHAT I WOULD SAY WAS POLISHED METAL OF SOME KIND AROUND THE EDGES .</Description>
+		</Sighting>
+	</Sightings><Ufo-shapes><Ufo-shape id="_1">Cylinder</Ufo-shape>
+		<Ufo-shape id="_2">Light</Ufo-shape>
+		<Ufo-shape id="_3">Circle</Ufo-shape>
+		<Ufo-shape id="_4">Sphere</Ufo-shape>
+		<Ufo-shape id="_5">Disk</Ufo-shape>
+	</Ufo-shapes></Ufo>
