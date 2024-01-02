@@ -1,77 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-    <xs:element name="Ufo">
-        <xs:complexType>
+  <!-- Define complex types for reusable structures -->
+  <xs:complexType name="DateTimeEncounterType">
+    <xs:sequence>
+      <xs:element name="Date" type="xs:date"/>
+      <xs:element name="Time" type="xs:time"/>
+      <xs:element name="Season" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="DateDocumentedType">
+    <xs:simpleContent>
+      <xs:extension base="xs:date"/>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="LocationType">
+    <xs:sequence>
+      <xs:element name="Country" type="xs:string"/>
+      <xs:element name="Region" type="xs:string"/>
+      <xs:element name="Locale" type="xs:string"/>
+      <xs:element name="Latitude" type="xs:string"/>
+      <xs:element name="Longitude" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="EncounterDurationType">
+    <xs:sequence>
+      <xs:element name="Text" type="xs:string"/>
+      <xs:element name="SecondsApproximate" type="xs:integer"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <!-- Define the main Ufo element -->
+  <xs:element name="Ufo">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Sightings">
+          <xs:complexType>
             <xs:sequence>
-                <xs:element name="Sightings">
-                    <xs:complexType>
-                        <xs:sequence>
-                            <xs:element name="Sighting" minOccurs="1" maxOccurs="unbounded">
-                                <xs:complexType>
-                                    <xs:sequence>
-                                        <xs:element name="DateTimeEncounter">
-                                            <xs:complexType>
-                                                <xs:sequence>
-                                                    <xs:element name="Date" type="xs:date"/>
-                                                    <xs:element name="Time" type="xs:time"/>
-                                                    <xs:element name="Season" type="xs:string"/>
-                                                </xs:sequence>
-                                            </xs:complexType>
-                                        </xs:element>
-                                        <xs:element name="DateDocumented" type="xs:date"/>
-                                        <xs:element name="Location">
-                                            <xs:complexType>
-                                                <xs:sequence>
-                                                    <xs:element name="Country" type="xs:string"/>
-                                                    <xs:element name="Region" type="xs:string"/>
-                                                    <xs:element name="Locale" type="xs:string"/>
-                                                    <xs:element name="Latitude" type="xs:double"/>
-                                                    <xs:element name="Longitude" type="xs:double"/>
-                                                </xs:sequence>
-                                            </xs:complexType>
-                                        </xs:element>
-                                        <xs:element name="EncounterDuration">
-                                            <xs:complexType>
-                                                <xs:sequence>
-                                                    <xs:element name="Text" type="xs:string"/>
-                                                    <xs:element name="SecondsApproximate" type="xs:long"/>
-                                                </xs:sequence>
-                                            </xs:complexType>
-                                        </xs:element>
-                                        <xs:element name="Description" type="xs:string"/>
-                                    </xs:sequence>
-                                    <xs:attribute name="id" type="xs:ID" use="required"/>
-                                    <xs:attribute name="ufo_shape_ref" type="xs:string"/>
-                                </xs:complexType>
-                            </xs:element>
-                        </xs:sequence>
-                    </xs:complexType>
-                </xs:element>
-
-               <xs:element name="Ufo-shapes">
-                    <xs:complexType>
-                        <xs:sequence>
-                            <xs:element name="Ufo-shape" minOccurs="0" maxOccurs="unbounded">
-                                <xs:complexType mixed="true">
-                                    <xs:attribute name="id" type="xs:ID"/>
-                                </xs:complexType>
-                            </xs:element>
-                        </xs:sequence>
-                    </xs:complexType>
-                </xs:element>
-
+              <xs:element name="Sighting" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="DateTimeEncounter" type="DateTimeEncounterType"/>
+                    <xs:element name="DateDocumented" type="DateDocumentedType"/>
+                    <xs:element name="Location" type="LocationType"/>
+                    <xs:element name="EncounterDuration" type="EncounterDurationType"/>
+                    <xs:element name="Description" type="xs:string"/>
+                  </xs:sequence>
+                  <xs:attribute name="id" type="xs:string"/>
+                  <xs:attribute name="ufo_shape_ref" type="xs:string"/>
+                </xs:complexType>
+              </xs:element>
             </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
-    <xs:simpleType name="SeasonType">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="Spring"/>
-            <xs:enumeration value="Summer"/>
-            <xs:enumeration value="Autumn"/>
-            <xs:enumeration value="Winter"/>
-        </xs:restriction>
-    </xs:simpleType>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="Ufo-shapes">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="Ufo-shape" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:simpleContent>
+                    <xs:extension base="xs:string">
+                      <xs:attribute name="id" type="xs:string"/>
+                    </xs:extension>
+                  </xs:simpleContent>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
 
 </xs:schema>
