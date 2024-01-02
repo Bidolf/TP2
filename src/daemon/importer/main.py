@@ -10,7 +10,6 @@ import psycopg2
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler, FileCreatedEvent
 from to_xml_converter import CSVtoXMLConverter
-import xml.etree.ElementTree as ET
 import xml.dom.minidom as md
 from lxml import etree as ET
 
@@ -24,6 +23,48 @@ def generate_unique_file_name(directory):
     return f"{directory}/{str(uuid.uuid4())}.xml"
 
 
+def count_elements_by_tag(element, tag_name):
+    count = 0
+    for child in element.iter(tag=tag_name):
+        count += 1
+    return count
+
+
+def copy_element(element, parent):
+    new_element = ET.SubElement(parent, element.tag)
+    for child in element:
+        copy_element(child, new_element)
+    return new_element
+
+
+def slice_tree(original_root, elements_per_part):
+    new_root = ET.Element(original_root.tag)
+    a = 0
+    sightings = original_root.find("Sightings")
+    new_sightings = ET.Element("Sightings")
+    for i, child in enumerate(sightings):
+        if i < elements_per_part:
+            copy_element(child, new_sightings)
+            sightings.remove(child)
+            a = i
+
+    if len(new_sightings) > 0:
+        new_root.append(new_sightings)
+
+    if a == 0:
+        ufo_shapes = original_root.find("Ufo-shapes")
+        new_ufo_shapes = ET.Element("Ufo-shapes")
+        for i, child in enumerate(ufo_shapes):
+            if i < elements_per_part:
+                copy_element(child, new_ufo_shapes)
+                ufo_shapes.remove(child)
+
+        if len(new_ufo_shapes) > 0:
+            new_root.append(new_ufo_shapes)
+
+    return new_root
+
+
 def convert_csv_to_xml(in_path, out_path, num_xml_parts, xsd_path):
     try:
         converter = CSVtoXMLConverter(in_path, xsd_path)
@@ -31,18 +72,27 @@ def convert_csv_to_xml(in_path, out_path, num_xml_parts, xsd_path):
 
         root = ET.fromstring(xml_str)
 
-        total_elements = len(list(root))
-        print(total_elements)
+        sighting_count = count_elements_by_tag(root, 'Sighting')
+        print(f"Total Sightings: {sighting_count}", flush=True)
+        ufo_shape_count = count_elements_by_tag(root, 'Ufo-shape')
+        print(f"Total Ufo-shapes: {ufo_shape_count}", flush=True)
+        total_elements = sighting_count + ufo_shape_count
+        print(f"Total Elements: {total_elements}", flush=True)
         elements_per_part = total_elements // num_xml_parts
-        list_xml_path = []
+        missing_elements = total_elements - (elements_per_part * num_xml_parts)
+        print(f"Elements per part: {elements_per_part}", flush=True)
+        print(f"Missing elements: {missing_elements}", flush=True)
 
-        for i in range(num_xml_parts):
-            new_root = ET.Element(root.tag)
-            for element in list(root)[i * elements_per_part: (i + 1) * elements_per_part]:
-                new_root.append(element)
+        list_xml_path = []
+        i = 0
+        while i < num_xml_parts:
+            if i == num_xml_parts - 1:
+                new_root = root
+            else:
+                new_root = slice_tree(root, elements_per_part)
 
             new_tree = ET.ElementTree(new_root)
-            xml_str = ET.tostring(new_tree, encoding='utf-8', method='xml').decode()
+            xml_str = ET.tostring(new_tree.getroot(), encoding='utf-8', method='xml').decode()
             dom = md.parseString(xml_str)
             xml_file = dom.toprettyxml()
 
@@ -193,15 +243,9 @@ if __name__ == "__main__":
         path=CSV_INPUT_PATH,
         recursive=True)
     observer.start()
-    # Start the daemon
-    #with daemon.DaemonContext(
-    #        pidfile=lockfile.FileLock('/var/run/csv_to_xml_daemon.pid'),
-    #        stderr=open('/tmp/csv_to_xml_err.log', 'w+'),
-    #        stdout=open('/tmp/csv_to_xml_out.log', 'w+')):
     try:
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
         observer.stop()
         observer.join()
-
