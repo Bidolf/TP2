@@ -56,7 +56,7 @@ class CSVtoXMLConverter:
             else:
                 ufo_shape_id = next(key for key, value in ufo_shapes_dict.items() if key == row.get('UFO_shape'))
 
-            sighting = ET.SubElement(sightings, "Sighting", id="_" + str(count), ufo_shape_ref="_" + str(ufo_shape_id))
+            sighting = ET.SubElement(sightings, "Sighting", id="_" + row.get(''), ufo_shape_ref="_" + str(ufo_shape_id))
 
             date_time_encounter = ET.SubElement(sighting, "DateTimeEncounter")
             date = ET.SubElement(date_time_encounter, "Date")
