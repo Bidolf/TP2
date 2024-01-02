@@ -35,8 +35,9 @@ class CSVtoXMLConverter:
         else:
             print("Dataset has not been validated", flush=True)
 
+
     def validate_xml(self, tree):
-        is_valid = self._schema.validate(tree)
+        is_valid = self._schema.assertValid(tree)
         return is_valid
 
     def create_element_tree(self, csv):
