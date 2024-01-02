@@ -2,7 +2,7 @@
 
 services:
 
-  # Database to store XML schema
+  # Database to store XML data
   db-xml:
     container_name: db-xml
     build: docker/images/db/xml
@@ -11,7 +11,7 @@ services:
     ports:
       - "${EXP_PORT_PG_XML}:5432"
 
-  # Database to store Relational schema
+  # Database to store Relational data
   db-rel:
     container_name: db-rel
     build: docker/images/db/rel
@@ -34,7 +34,7 @@ services:
     depends_on:
       - db-xml
 
-  # Container that automatically migrates schema from db-xml to db-rel
+  # Container that automatically migrates data from db-xml to db-rel
   migrator:
     container_name: migrator
     build: docker/images/python
@@ -48,7 +48,7 @@ services:
       - db-xml
       - db-rel
 
-  # Container that automatically migrates schema from db-xml to db-rel
+  # Container that automatically migrates data from db-xml to db-rel
   gis-updater:
     container_name: gis-updater
     build: docker/images/python
@@ -195,6 +195,19 @@ services:
       - ./docker/volumes/xml:/xml
     environment:
       USE_DEV_MODE: ${USE_DEV_MODE}
+
+  watcher:
+    container_name: watcher
+    build: docker/images/golang
+    volumes:
+      - ./src/daemon/watcher:/usr/src/app
+      - ./docker/volumes/xml:/xml
+    environment:
+      USE_DEV_MODE: ${USE_DEV_MODE}
+      POLLING_FREQ: ${POLLING_FREQ}
+    depends_on:
+      - db-xml
+      - db-rel
 
   broker:
     container_name: rabbitmq
