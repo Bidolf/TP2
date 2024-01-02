@@ -37,7 +37,7 @@ ALTER TABLE players
         FOREIGN KEY (team_id) REFERENCES teams
             ON DELETE SET NULL;
 
-/* Sample table and schema that we can insert once the database is created for the first time */
+/* Sample table and data that we can insert once the database is created for the first time */
 CREATE TABLE public.teachers (
 	name    VARCHAR (100),
 	city    VARCHAR(100),
