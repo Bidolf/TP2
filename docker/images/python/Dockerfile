@@ -12,7 +12,6 @@ RUN apk add postgresql-dev gcc python3-dev musl-dev
 RUN apk add --update nodejs npm
 RUN npm update npm -g
 RUN npm install nodemon -g
-
 # install build dependencies
 RUN apk add g++
 
