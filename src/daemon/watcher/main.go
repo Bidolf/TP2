@@ -32,6 +32,21 @@ func listXMLFiles() {
 	}
 }
 
+func dialWithRetry(url string) (*amqp.Connection, error) {
+	var conn *amqp.Connection
+	var err error
+	for {
+		conn, err = amqp.Dial(url)
+		if err == nil {
+			break // Connected successfully
+		}
+
+		log.Printf("Failed to connect to RabbitMQ: %s. Retrying in 5 seconds...", err)
+		time.Sleep(5 * time.Second) // Wait before retrying
+	}
+	return conn, nil
+}
+
 func main() {
     fmt.Printf("args: %d\n", len(os.Args[1:]))
     fmt.Printf("%s\n", os.Args[1:])
@@ -47,7 +62,7 @@ func main() {
     fmt.Println(rabbitMQURL)
 
 	// Connect to RabbitMQ
-	rabbitConn, err := amqp.Dial(rabbitMQURL)
+	rabbitConn, err := dialWithRetry(rabbitMQURL)
 	if err != nil {
 		log.Fatalf("Failed to connect to RabbitMQ: %s", err)
 	}
@@ -85,13 +100,17 @@ func main() {
 	}
 	defer db.Close()
 
+    fmt.Println(dbConnectionString)
+    fmt.Println("connected to postgres")
+
 	// Regularly check the database for new entries
 	ticker := time.NewTicker(60 * time.Second) // Example: check every 60 seconds
 	defer ticker.Stop()
     lastCheckedTime := time.Now().Format(time.DateTime)
 
 	for range ticker.C {
-		// Query for new entries (customize this query based on your schema)
+        fmt.Println("ticker is ticking")
+		// Query for new entries
 		rows, err := db.Query("SELECT id, file_name, xml, active FROM imported_documents WHERE created_on > $1", lastCheckedTime)
 		if err != nil {
 			log.Printf("Error querying database: %s", err)
@@ -107,6 +126,7 @@ func main() {
 				continue
 			}
 
+            fmt.Println("row processed")
 			// Publish message to RabbitMQ
 // 			err = ch.Publish(
 // 				"",        // Exchange
