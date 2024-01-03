@@ -108,7 +108,7 @@ def convert_csv_to_xml(in_path, out_path, num_xml_parts, xsd_path):
         return list_xml_path
 
     except Exception as e:
-        print(f"Error during XML conversion: {e}")
+        print(f"Error during XML conversion: {e}", flush=True)
         raise
 
 
@@ -183,7 +183,9 @@ class CSVHandler(FileSystemEventHandler):
     async def convert_csv(self, csv_path):
         # here we avoid converting the same file again
         # !TODO: check converted files in the database
+        print(f"Converting CSV to XML: {csv_path}", flush=True)
         if csv_path in await self.get_converted_files():
+            print(f"CSV path already exists: {csv_path}", flush=True)
             return
 
         print(f"new file to convert: '{csv_path}'", flush=True)
@@ -225,26 +227,33 @@ class CSVHandler(FileSystemEventHandler):
 
     def on_created(self, event):
         if not event.is_directory and event.src_path.endswith(".csv"):
+            print(f"New CSV file detected: {event.src_path}", flush=True)
             asyncio.run(self.convert_csv(event.src_path))
+        else:
+            print(f"Ignoring event: {event}", flush=True)
+
+
+def run_observer(csv_input_path, xml_output_path, num_xml_parts, xsd_path):
+    observer = Observer()
+    csv_handler = CSVHandler(csv_input_path, xml_output_path, num_xml_parts, xsd_path)
+    observer.schedule(csv_handler, path=csv_input_path, recursive=True)
+    observer.daemon = True
+    observer.start()
+    try:
+        while True:
+            time.sleep(10)
+    except KeyboardInterrupt:
+        observer.stop()
+        observer.join()
 
 
 if __name__ == "__main__":
     CSV_INPUT_PATH = "/csv"
     XML_OUTPUT_PATH = "/xml"
     XSD_PATH = "/xml/ufo_sightings.xsd"
+
     if len(sys.argv) >= 2:
         NUM_XML_PARTS = int(sys.argv[1])
     else:
         NUM_XML_PARTS = 1
-    observer = Observer()
-    observer.schedule(
-        CSVHandler(CSV_INPUT_PATH, XML_OUTPUT_PATH, NUM_XML_PARTS, XSD_PATH),
-        path=CSV_INPUT_PATH,
-        recursive=True)
-    observer.start()
-    try:
-        while True:
-            time.sleep(1)
-    except KeyboardInterrupt:
-        observer.stop()
-        observer.join()
+    run_observer(CSV_INPUT_PATH, XML_OUTPUT_PATH, NUM_XML_PARTS, XSD_PATH)
