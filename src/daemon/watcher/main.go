@@ -9,13 +9,10 @@ import (
 	"time"
 	"strings"
 
-    "github.com/streadway/amqp"
+    amqp "github.com/rabbitmq/amqp091-go"
 	_ "github.com/lib/pq"
 )
 
-const (
-
-)
 
 func sayHelloWorld() {
 	fmt.Println("Hello, World!!")
@@ -36,13 +33,19 @@ func listXMLFiles() {
 }
 
 func main() {
+    fmt.Printf("args: %d\n", len(os.Args[1:]))
+    fmt.Printf("%s\n", os.Args[1:])
     dbConnectionString := "postgres://is:is@db-xml:5432/is?sslmode=disable"
-    rabbitMQURL := fmt.Sprintf("amqp://%s:%s@rabbitmq:5672/%s", os.Args[0], os.Args[1], os.Args[2])
+    rabbitUser := os.Args[1]
+    rabbitPassword := os.Args[2]
+    rabbitVHost := os.Args[3]
+    rabbitMQURL := fmt.Sprintf("amqp://%s:%s@rabbitmq:5672/%s", rabbitUser, rabbitPassword, rabbitVHost)
     queueName := "new_entries_queue"
     // args for this main are $RABBITMQ_DEFAULT_USER, $RABBITMQ_DEFAULT_PASS, $RABBITMQ_DEFAULT_VHOST, and $POLLING_FREQ
 
-    fmt.Printf("%s",dbConnectionString)
-    fmt.Printf("%s",rabbitMQURL)
+    fmt.Println(dbConnectionString)
+    fmt.Println(rabbitMQURL)
+
 	// Connect to RabbitMQ
 	rabbitConn, err := amqp.Dial(rabbitMQURL)
 	if err != nil {
@@ -50,11 +53,15 @@ func main() {
 	}
 	defer rabbitConn.Close()
 
+    fmt.Println("dialed")
+
 	ch, err := rabbitConn.Channel()
 	if err != nil {
 		log.Fatalf("Failed to open a channel: %s", err)
 	}
 	defer ch.Close()
+
+    fmt.Println("channel connected")
 
 	// Declare a queue for messages
 	_, err = ch.QueueDeclare(
@@ -69,6 +76,8 @@ func main() {
 		log.Fatalf("Failed to declare a queue: %s", err)
 	}
 
+    fmt.Println("queue declared")
+
 	// Connect to PostgreSQL database
 	db, err := sql.Open("postgres", dbConnectionString)
 	if err != nil {
@@ -79,11 +88,11 @@ func main() {
 	// Regularly check the database for new entries
 	ticker := time.NewTicker(60 * time.Second) // Example: check every 60 seconds
 	defer ticker.Stop()
-    lastCheckedTime = time.Now().Format(time.DateTime)
+    lastCheckedTime := time.Now().Format(time.DateTime)
 
 	for range ticker.C {
 		// Query for new entries (customize this query based on your schema)
-		rows, err := db.Query("SELECT id, file_name, xml, active FROM your_table WHERE created_on > $1", lastCheckedTime)
+		rows, err := db.Query("SELECT id, file_name, xml, active FROM imported_documents WHERE created_on > $1", lastCheckedTime)
 		if err != nil {
 			log.Printf("Error querying database: %s", err)
 			continue
@@ -99,22 +108,25 @@ func main() {
 			}
 
 			// Publish message to RabbitMQ
-			err = ch.Publish(
-				"",        // Exchange
-				queueName, // Routing key
-				false,     // Mandatory
-				false,     // Immediate
-				amqp.Publishing{
-					ContentType: "text/plain",
-					Body:        []byte(fmt.Sprintf("New entry with ID: %d, Message: %s", id, message)),
-				})
-			if err != nil {
-				log.Printf("Failed to publish message: %s", err)
-				continue
-			}
+// 			err = ch.Publish(
+// 				"",        // Exchange
+// 				queueName, // Routing key
+// 				false,     // Mandatory
+// 				false,     // Immediate
+// 				amqp.Publishing{
+// 					ContentType: "text/plain",
+// 					Body:        []byte(fmt.Sprintf("New entry with ID: %d, Message: %s", id, message)),
+// 				})
+// 			if err != nil {
+// 				log.Printf("Failed to publish message: %s", err)
+// 				continue
+// 			}
+            fmt.Println("test-  message was going to be sent")
+
 
 			// Update the last checked time to avoid reprocessing old entries
-			// lastCheckedTime = currentTime or fetched entry timestamp
 		}
+
+	    lastCheckedTime = time.Now().Format(time.DateTime)
 	}
 }

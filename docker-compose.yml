@@ -204,10 +204,14 @@ services:
       - ./docker/volumes/xml:/xml
     environment:
       USE_DEV_MODE: ${USE_DEV_MODE}
+      RABBITMQ_DEFAULT_USER: "$RABBITMQ_DEFAULT_USER"
+      RABBITMQ_DEFAULT_PASS: "$RABBITMQ_DEFAULT_PASS"
+      RABBITMQ_DEFAULT_VHOST: "$RABBITMQ_DEFAULT_VHOST"
       POLLING_FREQ: ${POLLING_FREQ}
     depends_on:
       - db-xml
       - db-rel
+      - broker
 
   broker:
     container_name: rabbitmq
