@@ -47,6 +47,19 @@ services:
     depends_on:
       - db-xml
       - db-rel
+  # Container that runs the API for entities
+  api-entities:
+    container_name: api-entities
+    build: docker/images/javascript
+    volumes:
+      - ./src/api/entities:/usr/src/app
+      - ./docker/volumes/xml:/xml
+    ports:
+      - "${EXT_PORT_API_ENTITIES}:${API_PORT}"
+    environment:
+      USE_DEV_MODE: ${USE_DEV_MODE}
+      PORT: ${API_PORT}
+      DATABASE_URL: postgresql://is:is@db-rel:5432/is?schema=public
 
   # Container that automatically migrates data from db-xml to db-rel
   gis-updater:
@@ -125,20 +138,6 @@ services:
     depends_on:
       - api-proc
       - api-graphql
-
-  # Container that runs the API for entities
-  api-entities:
-    container_name: api-entities
-    build: docker/images/javascript
-    volumes:
-      - ./src/api/entities:/usr/src/app
-      - ./docker/volumes/xml:/xml
-    ports:
-      - "${EXT_PORT_API_ENTITIES}:${API_PORT}"
-    environment:
-      USE_DEV_MODE: ${USE_DEV_MODE}
-      PORT: ${API_PORT}
-      DATABASE_URL: postgresql://is:is@db-rel:5432/is?schema=public
 
   # Container that runs the API for gis
   api-gis:
