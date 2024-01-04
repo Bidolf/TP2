@@ -10,3 +10,4 @@ datetime
 aiohttp
 daemon
 lockfile
+pika
