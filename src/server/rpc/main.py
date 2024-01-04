@@ -6,11 +6,11 @@ from db_functions.db_delete import db_available_files_delete, db_delete
 from db_functions.db_addfiles import db_available_files_add, db_addfiles
 from db_functions.db_exists import db_exists
 from db_functions.import_files import import_files
-from src.server.rpc.db_functions.visualize_table import visualize_table
+from db_functions.visualize_table import visualize_table
 from functions.test_connection import test_connection
 from functions.retrieve_year_region import retrieve_year_region
-from src.server.rpc.db_functions.retrieve_xml import retrieve_xml
-from src.server.rpc.db_functions.retrieve_xml_group_by_file import retrieve_xml_group_by_file
+from db_functions.retrieve_xml import retrieve_xml
+from db_functions.retrieve_xml_group_by_file import retrieve_xml_group_by_file
 from functions.retrieve_shape_region import retrieve_shape_region
 from functions.get_number_sightings_in_year import get_number_sightings_in_year
 from functions.get_number_sightings_group_by_year import get_number_sightings_group_by_year
