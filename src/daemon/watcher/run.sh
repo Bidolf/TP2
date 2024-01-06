@@ -13,7 +13,7 @@ fi
 
 # Execute the project
 if [ "$USE_DEV_MODE" = "true" ]; then
-  nodemon --exec go run main.go "$RABBITMQ_DEFAULT_USER" "$RABBITMQ_DEFAULT_PASS" "$RABBITMQ_DEFAULT_VHOST" "$POLLING_FREQ";
+  nodemon --exec go run main.go "$RABBITMQ_DEFAULT_USER" "$RABBITMQ_DEFAULT_PASS" "$RABBITMQ_DEFAULT_VHOST" "$ROUTING_KEY_ENTITY_IMPORT" "$ROUTING_KEY_GEO_DATA_UPDATE" "$POLLING_FREQ";
 else
   ./$OUTPUT_BIN
 fi
