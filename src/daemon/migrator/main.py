@@ -8,6 +8,7 @@ POLLING_FREQ = int(sys.argv[1]) if len(sys.argv) >= 2 else 60
 RABBITMQ_HOST = int(sys.argv[2]) if len(sys.argv) >= 3 else "is"
 RABBITMQ_QUEUE = int(sys.argv[3]) if len(sys.argv) >= 4 else 'migration_queue'
 
+
 def print_psycopg2_exception(ex):
     # get details about the exception
     err_type, err_obj, traceback = sys.exc_info()
@@ -49,33 +50,30 @@ def on_message(channel1, method_frame, header_frame, body):
         channel1.basic_ack(delivery_tag=method_frame.delivery_tag)
 
 
-
-
 if __name__ == "__main__":
-        # Connect to both databases
-        db_org = None
-        db_dst = None
-        try:
-            db_org = psycopg2.connect(host='db-xml', database='is', user='is', password='is')
-            db_dst = psycopg2.connect(host='db-rel', database='is', user='is', password='is')
-        except OperationalError as err:
-            print_psycopg2_exception(err)
-            if db_dst is None or db_org is None:
-             continue
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host=RABBITMQ_HOST))
-        channel = connection.channel()
+    # Connect to both databases
+    db_org = None
+    db_dst = None
+    try:
+        db_org = psycopg2.connect(host='db-xml', database='is', user='is', password='is')
+        db_dst = psycopg2.connect(host='db-rel', database='is', user='is', password='is')
+    except OperationalError as err:
+        print_psycopg2_exception(err)
 
-        channel.queue_declare(queue=RABBITMQ_QUEUE)
-        channel.basic_consume(queue=RABBITMQ_QUEUE, on_message_callback=on_message)
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host=RABBITMQ_HOST))
+    channel = connection.channel()
 
-        print("Waiting for migration tasks. To exit press CTRL+C")
-        try:
-            channel.start_consuming()
-        except KeyboardInterrupt:
-            print("Stopping the migrator.")
-            channel.stop_consuming()
+    channel.queue_declare(queue=RABBITMQ_QUEUE)
+    channel.basic_consume(queue=RABBITMQ_QUEUE, on_message_callback=on_message)
 
-        connection.close()
-        db_org.close()
-        db_dst.close()
-        time.sleep(POLLING_FREQ)
+    print("Waiting for migration tasks. To exit press CTRL+C")
+    try:
+        channel.start_consuming()
+    except KeyboardInterrupt:
+        print("Stopping the migrator.")
+        channel.stop_consuming()
+
+    connection.close()
+    db_org.close()
+    db_dst.close()
+    time.sleep(POLLING_FREQ)

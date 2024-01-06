@@ -1,3 +1,5 @@
+//time_sleep() ver em todos os documentos.  e ver o daemon em todos.
+
 pg-xml
 	postgres xml
 	base de dados do tp1
