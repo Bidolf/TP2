@@ -81,6 +81,10 @@ type UfoData struct {
 	UfoShapes  UfoShapes  `xml:"Ufo-shapes"`
 }
 
+type Entity struct {
+	Type    string      `json:"type"` // Type of entity
+	Content interface{} `json:"content"`
+}
 
 func dialWithRetry(url string) (*amqp.Connection, error) {
 	var conn *amqp.Connection
@@ -135,6 +139,31 @@ func sendUfoShapeToRabbitMQ(ch *amqp.Channel, ufoShape UfoShape) error {
 	return nil
 }
 
+func sendEntityToRabbitMQ(ch *amqp.Channel, routingKey string, entityType string, entityContent interface{}) error {
+
+	 entity := Entity{
+		Type: entityType,
+		Content: entityContent,
+	}
+
+	entityJSON, err := json.Marshal(entity)
+	if err != nil {
+		return err
+	}
+	fmt.Println(string(entityJSON))
+
+	// Publish message to RabbitMQ
+	err = ch.Publish("", routingKey, false, false, amqp.Publishing{
+		ContentType: "application/json", // Change content type as needed
+		Body:        entityJSON,
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func declareQueue(ch *amqp.Channel, queueName string){
     _, err := ch.QueueDeclare(
 		queueName, // Queue name
@@ -161,6 +190,8 @@ func main() {
 		return
 	}
 	pollingFrequency := floatArg4
+	entityImportRoutingKey := "entity_import_routing_key"
+
     // args for this main are $RABBITMQ_DEFAULT_USER, $RABBITMQ_DEFAULT_PASS, $RABBITMQ_DEFAULT_VHOST, and $POLLING_FREQ
     dbConnectionString := "postgres://is:is@db-xml:5432/is?sslmode=disable"
     rabbitMQURL := fmt.Sprintf("amqp://%s:%s@rabbitmq:5672/%s", rabbitUser, rabbitPassword, rabbitVHost)
@@ -185,11 +216,8 @@ func main() {
     fmt.Println("channel connected")
 
 	// Declare a queue for messages
-	declareQueue(ch, "sighting_routing_key")
-    fmt.Println("\"sighting\" queue declared")
-
-	declareQueue(ch, "ufo_shape_routing_key")
-    fmt.Println("\"ufo shape\" queue declared")
+	declareQueue(ch, "entity_import_routing_key")
+    fmt.Println("\"entity import\" queue declared")
 
 	declareQueue(ch, "sighting_geo_data_routing_key")
     fmt.Println("\"update geo data on sighting\" queue declared")
@@ -247,22 +275,20 @@ func main() {
 
                     // Extract every Sighting from Sightings
                     for _, sighting := range ufoData.Sightings {
-                        err := sendSightingToRabbitMQ(ch, sighting)
+                        err := sendEntityToRabbitMQ(ch, entityImportRoutingKey, "sighting", sighting)
                         if err != nil {
                             log.Println(err)
                             continue
                         }
-                        fmt.Printf("Sighting ID: %s\n", sighting.ID)
                     }
 
                     // Extract every Ufo-shape from Ufo-shapes
                     for _, ufoShape := range ufoData.UfoShapes.UfoShapes {
-                        err := sendUfoShapeToRabbitMQ(ch, ufoShape)
+                        err := sendEntityToRabbitMQ(ch, entityImportRoutingKey, "ufo_shape", ufoShape)
                         if err != nil {
                             log.Println(err)
                             continue
                         }
-                        fmt.Printf("Ufo Shape ID: %s\n", ufoShape.ID)
                     }
 
                 }
