@@ -145,7 +145,6 @@ func sendEntityToRabbitMQ(ch *amqp.Channel, routingKey string, entityType string
 	if err != nil {
 		return err
 	}
-	fmt.Println(string(entityJSON))
 
 	// Publish message to RabbitMQ
 	err = ch.Publish("", routingKey, false, false, amqp.Publishing{
@@ -179,15 +178,16 @@ func main() {
     rabbitUser := os.Args[1]
     rabbitPassword := os.Args[2]
     rabbitVHost := os.Args[3]
-    floatArg4, err := strconv.ParseFloat(os.Args[4], 64)
+    entityImportRoutingKey := os.Args[4]
+    geoDataUpdateRoutingKey := os.Args[5]
+    floatArg6, err := strconv.ParseFloat(os.Args[6], 64)
 	if err != nil {
 		log.Fatalln("Error:", err)
 		return
 	}
-	pollingFrequency := floatArg4
-	entityImportRoutingKey := "entity_import_routing_key"
-
-    // args for this main are $RABBITMQ_DEFAULT_USER, $RABBITMQ_DEFAULT_PASS, $RABBITMQ_DEFAULT_VHOST, and $POLLING_FREQ
+	pollingFrequency := floatArg6
+    // args for this main are $RABBITMQ_DEFAULT_USER, $RABBITMQ_DEFAULT_PASS, $RABBITMQ_DEFAULT_VHOST,
+    // $ROUTING_KEY_ENTITY_IMPORT, $ROUTING_KEY_GEO_DATA_UPDATE, and $POLLING_FREQ
     dbConnectionString := "postgres://is:is@db-xml:5432/is?sslmode=disable"
     rabbitMQURL := fmt.Sprintf("amqp://%s:%s@rabbitmq:5672/%s", rabbitUser, rabbitPassword, rabbitVHost)
 
@@ -211,10 +211,10 @@ func main() {
     fmt.Println("channel connected")
 
 	// Declare a queue for messages
-	declareQueue(ch, "entity_import_routing_key")
+	declareQueue(ch, entityImportRoutingKey)
     fmt.Println("\"entity import\" queue declared")
 
-	declareQueue(ch, "sighting_geo_data_routing_key")
+	declareQueue(ch, geoDataUpdateRoutingKey)
     fmt.Println("\"update geo data on sighting\" queue declared")
 
 
@@ -234,6 +234,10 @@ func main() {
 	// Start time is zero
     var lastCheckedTime time.Time
 
+
+    sightingCounter := 0
+    shapeCounter := 0
+    fileCounter := 0
 	for range ticker.C {
         fmt.Println("ticker is ticking")
 		// Query for new entries
@@ -245,6 +249,9 @@ func main() {
 		defer rows.Close()
 
         fmt.Println("last checked time: ", lastCheckedTime)
+        sightingCounter = 0
+        shapeCounter = 0
+        fileCounter = 0
 		for rows.Next() {
 			var id int
 			var fileName string
@@ -275,6 +282,7 @@ func main() {
                             log.Println(err)
                             continue
                         }
+                        sightingCounter += 1
                     }
 
                     // Extract every Ufo-shape from Ufo-shapes
@@ -284,13 +292,14 @@ func main() {
                             log.Println(err)
                             continue
                         }
+                        shapeCounter += 1
                     }
-
+                    fileCounter += 1
                 }
             }
 		}
+		fmt.Println("Files: ",fileCounter,", sightings: ",sightingCounter,", shapes: ",shapeCounter)
 		// Update the last checked time to avoid reprocessing old entries
 	    lastCheckedTime = time.Now()
-
 	}
 }
