@@ -12,7 +12,7 @@ app.use((req, res, next) => {
 
 const port = parseInt(process?.argv[2] || 3000);
 
-// start express server on port 5000
+// start express rpc_server on port 5000
 app.listen(port, () => {
     console.log(`server started on port ${port}`);
 });

@@ -76,12 +76,12 @@ services:
       - api-gis
       - api-entities
 
-  # Container that runs the RPC server
+  # Container that runs the RPC rpc_server
   rpc-server:
-    container_name: rpc-server
+    container_name: rpc-rpc_server
     build: docker/images/python
     volumes:
-      - ./src/server/rpc:/usr/src/app
+      - ./src/rpc_server/rpc:/usr/src/app
       - ./docker/volumes/xml:/xml
     environment:
       USE_DEV_MODE: ${USE_DEV_MODE}

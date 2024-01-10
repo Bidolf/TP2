@@ -1,7 +1,7 @@
 from operator import itemgetter
 
 from lxml import etree
-from src.server.rpc.db_functions.retrieve_xml import retrieve_xml
+from src.server.db_functions.retrieve_xml import retrieve_xml
 
 
 def get_number_sightings_group_by_year(singleresult):

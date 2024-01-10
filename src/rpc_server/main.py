@@ -1,7 +1,7 @@
 import sys
 from xmlrpc.server import SimpleXMLRPCServer
 from xmlrpc.server import SimpleXMLRPCRequestHandler
-from db_functions.db_delete import db_available_files_delete, db_delete
+from db_functions.db_deletefiles import db_available_files_delete, db_delete
 from db_functions.db_addfiles import db_available_files_add, db_addfiles
 from db_functions.visualize_table import visualize_table
 from functions.test_connection import test_connection
@@ -38,7 +38,7 @@ if __name__ == "__main__":
         server.register_function(get_number_sightings_in_year)
         server.register_function(get_number_sightings_group_by_year)
 
-        # start the server
+        # start the rpc_server
         print(f"Starting the RPC Server in port {PORT}...", flush=True)
         try:
             server.serve_forever()
