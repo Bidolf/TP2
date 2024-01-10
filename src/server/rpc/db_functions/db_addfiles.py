@@ -1,3 +1,5 @@
+import os
+
 import psycopg2
 
 
@@ -28,6 +30,11 @@ def db_available_files_add():
     return files
 
 
+def obtainfile_name(path):
+    file_name = os.path.basename(path)
+    return file_name
+
+
 def db_addfiles(file):
     connection = None
     cursor = None
@@ -42,7 +49,11 @@ def db_addfiles(file):
         cursor.execute('SELECT 1 FROM imported_documents WHERE file_name = %s', (file,))
         file_add = cursor.fetchone()[0]
         if file_add:
-            cursor.execute('UPDATE imported_documents SET active = TRUE WHERE file_name = %s', (file,))
+            cursor.execute(
+                'UPDATE imported_documents SET active = TRUE, updated_on = datetime.now() WHERE file_name = %s',
+                (file,))
+            cursor.execute(
+                'UPDATE converted_documents SET active = TRUE, updated_on = datetime.now() WHERE obtainfile_name(dst) = %s',(file,))
             connection.commit()
             print(f"File {file} has been added", flush=True)
         else:

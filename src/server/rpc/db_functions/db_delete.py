@@ -1,4 +1,5 @@
 import psycopg2
+import os
 
 
 def db_available_files_delete():
@@ -28,6 +29,11 @@ def db_available_files_delete():
     return files
 
 
+def obtainfile_name(path):
+    file_name = os.path.basename(path)
+    return file_name
+
+
 def db_delete(file):
     connection = None
     cursor = None
@@ -42,7 +48,8 @@ def db_delete(file):
         cursor.execute('SELECT 1 FROM imported_documents WHERE file_name = %s', (file,))
         file_delete = cursor.fetchone()[0]
         if file_delete:
-            cursor.execute('UPDATE imported_documents SET active = FALSE WHERE file_name = %s', (file,))
+            cursor.execute('UPDATE imported_documents SET active = FALSE, updated_on = datetime.now(), deleted_on = datetime.now() WHERE file_name = %s', (file,))
+            cursor.execute('UPDATE converted_documents SET active = FALSE, updated_on = datetime.now() WHERE obtainfile_name(dst) = %s', (file,))
             connection.commit()
             print(f"File {file} has been soft-deleted", flush=True)
         else:

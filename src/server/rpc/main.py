@@ -1,11 +1,8 @@
-import signal, sys
+import sys
 from xmlrpc.server import SimpleXMLRPCServer
 from xmlrpc.server import SimpleXMLRPCRequestHandler
-from xmlgeneration.xmlgeneration import xmlgeneration
 from db_functions.db_delete import db_available_files_delete, db_delete
 from db_functions.db_addfiles import db_available_files_add, db_addfiles
-from db_functions.db_exists import db_exists
-from db_functions.import_files import import_files
 from db_functions.visualize_table import visualize_table
 from functions.test_connection import test_connection
 from functions.retrieve_year_region import retrieve_year_region
@@ -22,21 +19,9 @@ if __name__ == "__main__":
     class RequestHandler(SimpleXMLRPCRequestHandler):
         rpc_paths = ('/RPC2',)
 
+
     with SimpleXMLRPCServer(('localhost', PORT), requestHandler=RequestHandler) as server:
         server.register_introspection_functions()
-
-        def signal_handler(signum, frame):
-            print("received signal", flush=True)
-            server.server_close()
-
-            # perform clean up, etc. here...
-            print("exiting, gracefully", flush=True)
-            sys.exit(0)
-
-        # signals
-        signal.signal(signal.SIGTERM, signal_handler)
-        signal.signal(signal.SIGHUP, signal_handler)
-        signal.signal(signal.SIGINT, signal_handler)
 
         # register functions here
         server.register_function(test_connection)
@@ -55,10 +40,6 @@ if __name__ == "__main__":
 
         # start the server
         print(f"Starting the RPC Server in port {PORT}...", flush=True)
-        if not db_exists():
-            xmlgeneration()
-            import_files()
-            print("Server is ready", flush=True)
         try:
             server.serve_forever()
         except KeyboardInterrupt:

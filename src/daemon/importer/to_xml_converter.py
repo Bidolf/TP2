@@ -52,9 +52,9 @@ class CSVtoXMLConverter:
                 ufo_shape_id = count
                 ufo_shape = ET.SubElement(ufo_shapes, 'Ufo-shape', id="_" + str(ufo_shape_id))
                 ufo_shape.text = row.get('UFO_shape')
-                ufo_shapes_dict[row.get('UFO_shape')] = True
+                ufo_shapes_dict[row.get('UFO_shape')] = ufo_shape_id
             else:
-                ufo_shape_id = next(key for key, value in ufo_shapes_dict.items() if key == row.get('UFO_shape'))
+                ufo_shape_id = ufo_shapes_dict[row.get('UFO_shape')]
 
             sighting = ET.SubElement(sightings, "Sighting", id="_" + row.get(''), ufo_shape_ref="_" + str(ufo_shape_id))
 

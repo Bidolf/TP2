@@ -16,25 +16,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-
-func sayHelloWorld() {
-	fmt.Println("Hello, World!!")
-}
-
-func listXMLFiles() {
-	files, err := ioutil.ReadDir("/xml")
-	if err != nil {
-		fmt.Printf("Error accessing /xml: %s\n", err)
-		return
-	}
-
-	for _, f := range files {
-		if strings.HasSuffix(f.Name(), ".xml") {
-			fmt.Printf("\t> %s\n", f.Name())
-		}
-	}
-}
-
 type DateTimeEncounterType struct {
 	Date   string `xml:"Date"`
 	Time   string `xml:"Time"`
@@ -82,8 +63,22 @@ type UfoData struct {
 }
 
 type Entity struct {
-	Type    string      `json:"type"` // Type of entity
+	Type    string      `json:"type"`
 	Content interface{} `json:"content"`
+}
+
+func listXMLFiles() {
+	files, err := ioutil.ReadDir("/xml")
+	if err != nil {
+		fmt.Printf("Error accessing /xml: %s\n", err)
+		return
+	}
+
+	for _, f := range files {
+		if strings.HasSuffix(f.Name(), ".xml") {
+			fmt.Printf("\t> %s\n", f.Name())
+		}
+	}
 }
 
 func dialWithRetry(url string) (*amqp.Connection, error) {
