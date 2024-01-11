@@ -137,7 +137,6 @@ services:
       API_PROC_URL: "localhost:${EXT_PORT_API_PROC}"
     depends_on:
       - api-proc
-      - api-graphql
 
   # Container that runs the API for gis
   api-gis:
