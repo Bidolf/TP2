@@ -6,7 +6,7 @@ from psycopg2 import OperationalError
 
 POLLING_FREQ = int(sys.argv[1]) if len(sys.argv) >= 2 else 60
 RABBITMQ_HOST = int(sys.argv[2]) if len(sys.argv) >= 3 else "is"
-RABBITMQ_QUEUE = int(sys.argv[3]) if len(sys.argv) >= 4 else 'migration_queue'
+RABBITMQ_QUEUE = int(sys.argv[3]) if len(sys.argv) >= 4 else 'entity_import_routing_key'
 
 
 def print_psycopg2_exception(ex):
