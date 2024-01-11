@@ -53,8 +53,8 @@ function Players() {
     const [maxDataSize, setMaxDataSize] = useState(DEMO_PLAYERS.length);
 
     useEffect(() => {
-        //!FIXME: this is to simulate how to retrieve schema from the rpc_server
-        //!FIXME: the entities rpc_server URL is available on process.env.REACT_APP_API_ENTITIES_URL
+        //!FIXME: this is to simulate how to retrieve schema from the server
+        //!FIXME: the entities server URL is available on process.env.REACT_APP_API_ENTITIES_URL
         setData(null);
         setTimeout(() => {
             console.log(`fetching from ${process.env.REACT_APP_API_ENTITIES_URL}`)

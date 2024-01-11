@@ -76,12 +76,12 @@ services:
       - api-gis
       - api-entities
 
-  # Container that runs the RPC rpc_server
+  # Container that runs the RPC server
   rpc-server:
-    container_name: rpc-rpc_server
+    container_name: rpc-server
     build: docker/images/python
     volumes:
-      - ./src/rpc_server/rpc:/usr/src/app
+      - ./src/server/rpc:/usr/src/app
       - ./docker/volumes/xml:/xml
     environment:
       USE_DEV_MODE: ${USE_DEV_MODE}
@@ -160,18 +160,6 @@ services:
       - ./docker/volumes/xml:/xml
     ports:
       - "${EXT_PORT_API_PROC}:${API_PORT}"
-    environment:
-      API_PORT: ${API_PORT}
-
-  # Container that runs the API for graphql
-  api-graphql:
-    container_name: api-graphql
-    build: docker/images/python
-    volumes:
-      - ./src/api/graphql:/usr/src/app
-      - ./docker/volumes/xml:/xml
-    ports:
-      - "${EXT_PORT_API_GRAPHQL}:${API_PORT}"
     environment:
       API_PORT: ${API_PORT}
 

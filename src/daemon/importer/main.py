@@ -173,10 +173,9 @@ class CSVHandler(FileSystemEventHandler):
         self._input_path = input_path
         self._num_xml_parts = num_xml_parts
         self._xsd_path = xsd_path
-
         # generate file creation events for existing files
         for file in [os.path.join(dp, f) for dp, dn, filenames in os.walk(input_path) for f in filenames]:
-            event = FileCreatedEvent(os.path.join(CSV_INPUT_PATH, file))
+            event = FileCreatedEvent(os.path.join(input_path, file))
             event.event_type = "created"
             self.dispatch(event)
 
@@ -237,14 +236,14 @@ def run_observer(csv_input_path, xml_output_path, num_xml_parts, xsd_path):
     observer = Observer()
     csv_handler = CSVHandler(csv_input_path, xml_output_path, num_xml_parts, xsd_path)
     observer.schedule(csv_handler, path=csv_input_path, recursive=True)
-    observer.daemon = True
     observer.start()
     try:
         while True:
-            time.sleep(10)
+            time.sleep(1)
     except KeyboardInterrupt:
         observer.stop()
         observer.join()
+        print("Observer stopped.")
 
 
 if __name__ == "__main__":
@@ -256,4 +255,5 @@ if __name__ == "__main__":
         NUM_XML_PARTS = int(sys.argv[1])
     else:
         NUM_XML_PARTS = 1
+    print(f"Watching directory: {CSV_INPUT_PATH} for CSV files.")
     run_observer(CSV_INPUT_PATH, XML_OUTPUT_PATH, NUM_XML_PARTS, XSD_PATH)

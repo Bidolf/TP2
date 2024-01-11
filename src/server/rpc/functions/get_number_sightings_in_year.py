@@ -1,5 +1,5 @@
 from lxml import etree
-from src.server.db_functions.retrieve_xml_group_by_file import retrieve_xml_group_by_file
+from src.server.rpc.db_functions.retrieve_xml_group_by_file import retrieve_xml_group_by_file
 
 
 def get_number_sightings_in_year(year, singleresult):

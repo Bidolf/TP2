@@ -38,7 +38,7 @@ if __name__ == "__main__":
         server.register_function(get_number_sightings_in_year)
         server.register_function(get_number_sightings_group_by_year)
 
-        # start the rpc_server
+        # start the server
         print(f"Starting the RPC Server in port {PORT}...", flush=True)
         try:
             server.serve_forever()
