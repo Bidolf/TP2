@@ -44,26 +44,31 @@ def on_message(channel1, method_frame, header_frame, body):
     try:
         print("Received message:", body.decode('utf-8'))
         migrate_data()
+        time.sleep(POLLING_FREQ)
     except Exception as e:
         print("Error processing message:", e)
     finally:
+        #(acknowledgment) ao RabbitMQ indicando que a mensagem com a tag de entrega (delivery_tag) fornecida foi processada com sucesso.
         channel1.basic_ack(delivery_tag=method_frame.delivery_tag)
 
 
 if __name__ == "__main__":
     # Connect to both databases
-    db_org = None
-    db_dst = None
-    try:
-        db_org = psycopg2.connect(host='db-xml', database='is', user='is', password='is')
-        db_dst = psycopg2.connect(host='db-rel', database='is', user='is', password='is')
-    except OperationalError as err:
-        print_psycopg2_exception(err)
+    # db_org = None
+    # db_dst = None
+    # try:
+    #   db_org = psycopg2.connect(host='db-xml', database='is', user='is', password='is')
+    #   db_dst = psycopg2.connect(host='db-rel', database='is', user='is', password='is')
+    # except OperationalError as err:
+    #   print_psycopg2_exception(err)
 
+    #Cria uma conexão bloqueante com o RabbitMQ usando os parâmetros fornecidos, como o host do RabbitMQ.
     connection = pika.BlockingConnection(pika.ConnectionParameters(host=RABBITMQ_HOST))
+    #Cria um canal de comunicação na conexão.
     channel = connection.channel()
-
+    #Declara a fila que será usada para a comunicação
     channel.queue_declare(queue=RABBITMQ_QUEUE)
+    # escutar a fila especificada (RABBITMQ_QUEUE) 
     channel.basic_consume(queue=RABBITMQ_QUEUE, on_message_callback=on_message)
 
     print("Waiting for migration tasks. To exit press CTRL+C")
@@ -72,8 +77,6 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("Stopping the migrator.")
         channel.stop_consuming()
-
     connection.close()
-    db_org.close()
-    db_dst.close()
-    time.sleep(POLLING_FREQ)
+    #db_org.close()
+    #db_dst.close()
