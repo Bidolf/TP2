@@ -68,7 +68,7 @@ if __name__ == "__main__":
     channel = connection.channel()
     #Declara a fila que será usada para a comunicação
     channel.queue_declare(queue=RABBITMQ_QUEUE)
-    # escutar a fila especificada (RABBITMQ_QUEUE) 
+    # escutar a fila especificada (RABBITMQ_QUEUE)
     channel.basic_consume(queue=RABBITMQ_QUEUE, on_message_callback=on_message)
 
     print("Waiting for migration tasks. To exit press CTRL+C")
@@ -78,5 +78,8 @@ if __name__ == "__main__":
         print("Stopping the migrator.")
         channel.stop_consuming()
     connection.close()
+
+
+
     #db_org.close()
     #db_dst.close()
