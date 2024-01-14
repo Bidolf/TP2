@@ -146,7 +146,7 @@ func main() {
 		log.Fatal("Error declaring RabbitMQ queue:", err)
 	}
 
-	go func() {
+	//go func() {
 		messages, err := channel.Consume(
 			entityImportRoutingKey,
 			"",    // Consumer name (empty means RabbitMQ generates a unique name)
@@ -164,6 +164,6 @@ func main() {
 			handleDelivery(delivery)
 		}
 		fmt.Println("Stopping the migrator.")
-	}()
+	//}()
 
 }
