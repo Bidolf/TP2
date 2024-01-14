@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Ufo><Sightings><Sighting id="_2" ufo_shape_ref="_3">
+			<DateTimeEncounter>
+				<Date>1955-10-10</Date>
+				<Time>17:00:00</Time>
+				<Season>Autumn</Season>
+			</DateTimeEncounter>
+			<DateDocumented>2008-01-21</DateDocumented>
+			<Location>
+				<Country>United Kingdom</Country>
+				<Region>England</Region>
+				<Locale>Chester</Locale>
+				<Latitude>53.2</Latitude>
+				<Longitude>-2.916667</Longitude>
+			</Location>
+			<EncounterDuration>
+				<Text>20 seconds</Text>
+				<SecondsApproximate>20</SecondsApproximate>
+			</EncounterDuration>
+			<Description>Green/Orange circular disc over Chester&amp;#44 England</Description>
+		</Sighting>
+		</Sightings></Ufo>

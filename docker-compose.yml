@@ -37,17 +37,38 @@ services:
   # Container that automatically migrates data from db-xml to db-rel
   migrator:
     container_name: migrator
-    build: docker/images/python
+    build: docker/images/golang
     volumes:
       - ./src/daemon/migrator:/usr/src/app
       - ./docker/volumes/xml:/xml
     environment:
       USE_DEV_MODE: ${USE_DEV_MODE}
       POLLING_FREQ: ${POLLING_FREQ}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST}
       ROUTING_KEY_ENTITY_IMPORT: ${ROUTING_KEY_ENTITY_IMPORT}
     depends_on:
       - db-xml
       - db-rel
+
+  watcher:
+    container_name: watcher
+    build: docker/images/golang
+    volumes:
+      - ./src/daemon/watcher:/usr/src/app
+      - ./docker/volumes/xml:/xml
+    environment:
+      USE_DEV_MODE: ${USE_DEV_MODE}
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST}
+      ROUTING_KEY_ENTITY_IMPORT: ${ROUTING_KEY_ENTITY_IMPORT}
+      ROUTING_KEY_GEO_DATA_UPDATE: ${ROUTING_KEY_GEO_DATA_UPDATE}
+      POLLING_FREQ: ${POLLING_FREQ}
+    depends_on:
+      - db-xml
+      - db-rel
+      - broker
+
   # Container that runs the API for entities
   api-entities:
     container_name: api-entities
@@ -181,25 +202,6 @@ services:
       - ./docker/volumes/xml:/xml
     environment:
       USE_DEV_MODE: ${USE_DEV_MODE}
-
-  watcher:
-    container_name: watcher
-    build: docker/images/golang
-    volumes:
-      - ./src/daemon/watcher:/usr/src/app
-      - ./docker/volumes/xml:/xml
-    environment:
-      USE_DEV_MODE: ${USE_DEV_MODE}
-      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
-      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
-      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_DEFAULT_VHOST}
-      ROUTING_KEY_ENTITY_IMPORT: ${ROUTING_KEY_ENTITY_IMPORT}
-      ROUTING_KEY_GEO_DATA_UPDATE: ${ROUTING_KEY_GEO_DATA_UPDATE}
-      POLLING_FREQ: ${POLLING_FREQ}
-    depends_on:
-      - db-xml
-      - db-rel
-      - broker
 
   broker:
     container_name: rabbitmq
