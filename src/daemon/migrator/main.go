@@ -63,7 +63,7 @@ func migrateData() {
 	// This might involve interacting with api-entities
 }
 
-func handleDelivery(channel *amqp.Channel, delivery amqp.Delivery) {
+func handleDelivery(delivery amqp.Delivery) {
 	defer func(delivery amqp.Delivery, multiple bool) {
 		err := delivery.Ack(multiple)
 		if err != nil {
@@ -87,12 +87,12 @@ func main() {
 		Database: "is",
 	})
 	if err != nil {
-		log.Fatal("Error connecting to the PostgreSQL database:", err)
+		log.Fatal("Error connecting to the XML database:", err)
 	}
 	defer func(conn *pgx.Conn) {
 		err := conn.Close()
 		if err != nil {
-			log.Println("Error closing connection to the PostgreSQL database:", err)
+			log.Println("Error closing connection to the XML database:", err)
 		}
 	}(connXml)
 	connRel, err := pgx.Connect(pgx.ConnConfig{
@@ -102,12 +102,12 @@ func main() {
 		Database: "is",
 	})
 	if err != nil {
-		log.Fatal("Error connecting to the PostgreSQL database:", err)
+		log.Fatal("Error connecting to the REL database:", err)
 	}
 	defer func(conn *pgx.Conn) {
 		err := conn.Close()
 		if err != nil {
-			log.Println("Error closing connection to the PostgreSQL database:", err)
+			log.Println("Error closing connection to the REL database:", err)
 		}
 	}(connRel)
 
@@ -134,37 +134,36 @@ func main() {
 			log.Println("Error closing RabbitMQ channel:", err)
 		}
 	}(channel)
-
 	_, err = channel.QueueDeclare(
 		entityImportRoutingKey,
-		false,
-		false,
-		false,
-		false,
-		nil,
+		false, // Durable: Whether the queue survives broker restarts
+		false, // AutoDelete: Whether the queue is deleted when no consumers are connected
+		false, // Exclusive: Whether the queue is exclusive to the connection (only used by this connection)
+		false, // NoWait: It will block and wait until the server sends a response confirming the successful creation of the queue
+		nil,   // Arguments: Additional optional arguments for queue declaration
 	)
 	if err != nil {
 		log.Fatal("Error declaring RabbitMQ queue:", err)
 	}
 
-	messages, err := channel.Consume(
-		entityImportRoutingKey,
-		"",
-		false,
-		false,
-		false,
-		false,
-		nil,
-	)
-	if err != nil {
-		log.Fatal("Error consuming messages from RabbitMQ:", err)
-	}
+	go func() {
+		messages, err := channel.Consume(
+			entityImportRoutingKey,
+			"",    // Consumer name (empty means RabbitMQ generates a unique name)
+			false, // AutoAck: Whether the server should acknowledge messages automatically
+			false, // Exclusive: Whether this consumer should be exclusive to this connection
+			false, // NoLocal: Whether the server should not send messages that were published by this connection
+			false, // NoWait: Whether to wait for a server response before returning from the method
+			nil,   // Arguments
+		)
+		if err != nil {
+			log.Fatal("Error consuming messages from RabbitMQ:", err)
+		}
+		fmt.Println("Waiting for migration tasks. To exit press CTRL+C")
+		for delivery := range messages {
+			handleDelivery(delivery)
+		}
+		fmt.Println("Stopping the migrator.")
+	}()
 
-	fmt.Println("Waiting for migration tasks. To exit press CTRL+C")
-
-	for delivery := range messages {
-		handleDelivery(channel, delivery)
-	}
-
-	fmt.Println("Stopping the migrator.")
 }
