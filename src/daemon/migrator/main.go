@@ -77,8 +77,11 @@ func handleDelivery(delivery amqp.Delivery) {
 
 	body := delivery.Body
 	fmt.Println("Received message:", string(body))
+	fmt.Println("Processing message...")
 	migrateData()
+	fmt.Printf("Sleeping for %v seconds before processing the next message.\n", pollingFrequency)
 	time.Sleep(time.Duration(pollingFrequency) * time.Second)
+	fmt.Println("Message processing complete.")
 }
 
 func main() {
@@ -94,6 +97,8 @@ func main() {
 		os.Exit(0)
 	}()
 
+    // Connect to XML database
+	fmt.Println("Connecting to the XML database...")
 	dbXml, err := sql.Open("postgres", "postgres://is:is@db-xml/is")
     if err != nil {
         log.Fatal("Error connecting to the XML database:", err)
@@ -104,7 +109,9 @@ func main() {
             log.Println("Error closing connection to the XML database:", err)
      }
     }(dbXml)
-
+    fmt.Println("Connected to the XML database.")
+    // Connect to REL database
+	fmt.Println("Connecting to the REL database...")
     dbRel, err := sql.Open("postgres", "postgres://is:is@db-rel/is")
     if err != nil {
      log.Fatal("Error connecting to the REL database:", err)
@@ -115,8 +122,10 @@ func main() {
           log.Println("Error closing connection to the REL database:", err)
       }
     }(dbRel)
+    fmt.Println("Connected to the REL database.")
 
-
+    // Connect to RabbitMQ
+	fmt.Println("Connecting to RabbitMQ...")
 	rabbitMQURL := fmt.Sprintf("amqp://%s:%s@rabbitmq:5672/%s", rabbitUser, rabbitPassword, rabbitVHost)
 	// Connect to RabbitMQ
 	rabbitConn, err := dialWithRetry(rabbitMQURL)
@@ -129,7 +138,7 @@ func main() {
 			log.Println("Error closing RabbitMQ connection:", err)
 		}
 	}(rabbitConn)
-	fmt.Println("dialed")
+	fmt.Println("Connected to RabbitMQ.")
 	channel, err := rabbitConn.Channel()
 	if err != nil {
 		log.Fatal("Error creating RabbitMQ channel:", err)
@@ -140,6 +149,7 @@ func main() {
 			log.Println("Error closing RabbitMQ channel:", err)
 		}
 	}(channel)
+	fmt.Println("RabbitMQ channel created successfully.")
 	_, err = channel.QueueDeclare(
 		entityImportRoutingKey,
 		true, // Durable: Whether the queue survives broker restarts
@@ -151,7 +161,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Error declaring RabbitMQ queue:", err)
 	}
-
+    fmt.Printf("Declared RabbitMQ queue: %s\n", entityImportRoutingKey)
 	messages, err := channel.Consume(
 		entityImportRoutingKey,
 		"",    // Consumer name (empty means RabbitMQ generates a unique name)

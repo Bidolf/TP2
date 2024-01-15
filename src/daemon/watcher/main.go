@@ -51,6 +51,7 @@ type Sighting struct {
 
 type UfoShape struct {
     ID string `xml:"id,attr"`
+    Value string `xml:",chardata"`
 }
 
 type UfoShapes struct {
