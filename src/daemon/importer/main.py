@@ -255,5 +255,6 @@ if __name__ == "__main__":
         NUM_XML_PARTS = int(sys.argv[1])
     else:
         NUM_XML_PARTS = 1
-    print(f"Watching directory: {CSV_INPUT_PATH} for CSV files.")
+    print(f"Watching directory: {CSV_INPUT_PATH} for CSV files...")
+    time.sleep(30)
     run_observer(CSV_INPUT_PATH, XML_OUTPUT_PATH, NUM_XML_PARTS, XSD_PATH)

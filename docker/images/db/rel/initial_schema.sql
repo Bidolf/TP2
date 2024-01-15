@@ -3,7 +3,7 @@ CREATE EXTENSION IF NOT EXISTS POSTGIS;
 CREATE EXTENSION IF NOT EXISTS POSTGIS_TOPOLOGY;
 
 CREATE TABLE public.sightings (
-	id UUID PRIMARY KEY DEFAULT uuid_generate_v5(),
+	id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 	ufo_shape_ref UUID NOT NULL,
     date_encounter DATE,
     time_encounter TIME,
@@ -21,7 +21,7 @@ CREATE TABLE public.sightings (
 );
 
 CREATE TABLE public.ufo_shapes (
-	id UUID PRIMARY KEY DEFAULT uuid_generate_v5(),
+	id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     shape_name VARCHAR(255) NOT NULL,
 	created_on      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_on      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP

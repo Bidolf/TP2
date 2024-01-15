@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Ufo><Sightings><Sighting id="_3" ufo_shape_ref="_3">
+			<DateTimeEncounter>
+				<Date>1956-10-10</Date>
+				<Time>21:00:00</Time>
+				<Season>Autumn</Season>
+			</DateTimeEncounter>
+			<DateDocumented>2004-01-17</DateDocumented>
+			<Location>
+				<Country>United States</Country>
+				<Region>Texas</Region>
+				<Locale>Edna</Locale>
+				<Latitude>28.9783333</Latitude>
+				<Longitude>-96.6458333</Longitude>
+			</Location>
+			<EncounterDuration>
+				<Text>1/2 hour</Text>
+				<SecondsApproximate>20</SecondsApproximate>
+			</EncounterDuration>
+			<Description>My older brother and twin sister were leaving the only Edna theater at about 9 PM&amp;#44...we had our bikes and I took a different route home</Description>
+		</Sighting>
+		</Sightings></Ufo>

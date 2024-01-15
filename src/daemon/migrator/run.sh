@@ -2,10 +2,11 @@
 
 OUTPUT_BIN="main"
 
+# Initialize Go module if not done already
+
 go mod init migrator
 go get github.com/lib/pq
-go get github.com/rabbitmq/amqp
-
+go get github.com/rabbitmq/amqp091-go
 # Check if not in dev mode
 if [ "$USE_DEV_MODE" != "true" ]; then
   go build -o $OUTPUT_BIN main.go

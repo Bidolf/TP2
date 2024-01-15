@@ -2,9 +2,9 @@
 
 OUTPUT_BIN="main"
 
-go mod init migrator
-go get github.com/jackc/pgx
-go get github.com/streadway/amqp091-go
+go mod init watcher
+go get github.com/lib/pq
+go get github.com/rabbitmq/amqp091-go
 
 # Check if not in dev mode
 if [ "$USE_DEV_MODE" != "true" ]; then
