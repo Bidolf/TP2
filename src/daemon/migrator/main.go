@@ -1,16 +1,18 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
 	"syscall"
 	"time"
-	"database/sql"
 
-	amqp "github.com/rabbitmq/amqp091-go"
+    amqp "github.com/rabbitmq/amqp091-go"
 	_ "github.com/lib/pq"
 )
 
@@ -30,7 +32,6 @@ func dialWithRetry(url string) (*amqp.Connection, error) {
 		if err == nil {
 			break // Connected successfully
 		}
-
 		fmt.Printf("Failed to connect to RabbitMQ: %s. Retrying in 5 seconds...\n", err)
 		time.Sleep(5 * time.Second) // Wait before retrying
 	}
@@ -55,76 +56,61 @@ func initialize() {
 	}
 }
 
-func migrateData() {
-	// TODO: Implement your migration logic here
-	fmt.Println("Checking updates...")
-	// !TODO: 1- Execute a SELECT query to check for any changes on the table
-	// !TODO: 2- Execute a SELECT queries with xpath to retrieve the schema we want to store in the relational db
-	// !TODO: 3- Execute INSERT queries in the destination db
-	// !TODO: 4- Make sure we store somehow in the origin database that certain records were already migrated.
-	//          Change the db structure if needed.
-	// This might involve interacting with api-entities
+func migrateData(body []byte) error {
+	// URL of the API endpoint for sightings
+	apiURL := "http://your-api-entities.com/api/sightings"
+	resp, err := http.Post(apiURL, "application/json", bytes.NewBuffer(body))
+	if err != nil {
+		return fmt.Errorf("Error sending request to API: %v", err)
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			fmt.Printf("Error closing response body: %v\n", err)
+		}
+	}(resp.Body)
+	// Check the response status
+	if resp.StatusCode == http.StatusCreated {
+		fmt.Printf("Sighting record created successfully! Status: %d, Message: %s\n", resp.StatusCode, resp.Status)
+	} else {
+		return fmt.Errorf("Error creating sighting record. Status: %d, Message: %s", resp.StatusCode, resp.Status)
+	}
+	return nil
 }
 
-func handleDelivery(delivery amqp.Delivery) {
-    //acknowledge a single delivery (false)
+func handleDelivery(delivery amqp.Delivery, count int) bool {
+	//acknowledge a single delivery (false)
 	defer func(delivery amqp.Delivery, multiple bool) {
 		err := delivery.Ack(multiple)
 		if err != nil {
 			log.Println("Error acknowledging message:", err)
 		}
 	}(delivery, false) // Acknowledge the message after processing
-
 	body := delivery.Body
 	fmt.Println("Received message:", string(body))
 	fmt.Println("Processing message...")
-	migrateData()
+	if err := migrateData(body); err != nil {
+		fmt.Println("Error migrating data:", err)
+		return false
+	}
 	fmt.Printf("Sleeping for %v seconds before processing the next message.\n", pollingFrequency)
 	time.Sleep(time.Duration(pollingFrequency) * time.Second)
 	fmt.Println("Message processing complete.")
+	fmt.Printf("Message processing complete. Number of entities migrated: %d\n", count)
+	return true
 }
 
 func main() {
 	initialize()
-
 	signalCh := make(chan os.Signal, 1)
 	signal.Notify(signalCh, os.Interrupt, syscall.SIGTERM)
-
 	// Start a goroutine to handle signals. A goroutine is a concurrent thread of execution.
 	go func() {
 		<-signalCh
 		fmt.Println("Received interrupt signal. Stopping the migrator.")
 		os.Exit(0)
 	}()
-
-    // Connect to XML database
-	fmt.Println("Connecting to the XML database...")
-	dbXml, err := sql.Open("postgres", "postgres://is:is@db-xml/is")
-    if err != nil {
-        log.Fatal("Error connecting to the XML database:", err)
-    }
-    defer func(db *sql.DB) {
-     err := db.Close()
-     if err != nil {
-            log.Println("Error closing connection to the XML database:", err)
-     }
-    }(dbXml)
-    fmt.Println("Connected to the XML database.")
-    // Connect to REL database
-	fmt.Println("Connecting to the REL database...")
-    dbRel, err := sql.Open("postgres", "postgres://is:is@db-rel/is")
-    if err != nil {
-     log.Fatal("Error connecting to the REL database:", err)
-    }
-    defer func(db *sql.DB) {
-      err := db.Close()
-      if err != nil {
-          log.Println("Error closing connection to the REL database:", err)
-      }
-    }(dbRel)
-    fmt.Println("Connected to the REL database.")
-
-    // Connect to RabbitMQ
+	// Connect to RabbitMQ
 	fmt.Println("Connecting to RabbitMQ...")
 	rabbitMQURL := fmt.Sprintf("amqp://%s:%s@rabbitmq:5672/%s", rabbitUser, rabbitPassword, rabbitVHost)
 	// Connect to RabbitMQ
@@ -152,7 +138,7 @@ func main() {
 	fmt.Println("RabbitMQ channel created successfully.")
 	_, err = channel.QueueDeclare(
 		entityImportRoutingKey,
-		true, // Durable: Whether the queue survives broker restarts
+		true,  // Durable: Whether the queue survives broker restarts
 		false, // AutoDelete: Whether the queue is deleted when no consumers are connected
 		false, // Exclusive: Whether the queue is exclusive to the connection (only used by this connection)
 		false, // NoWait: It will block and wait until the server sends a response confirming the successful creation of the queue
@@ -161,7 +147,7 @@ func main() {
 	if err != nil {
 		log.Fatal("Error declaring RabbitMQ queue:", err)
 	}
-    fmt.Printf("Declared RabbitMQ queue: %s\n", entityImportRoutingKey)
+	fmt.Printf("Declared RabbitMQ queue: %s\n", entityImportRoutingKey)
 	messages, err := channel.Consume(
 		entityImportRoutingKey,
 		"",    // Consumer name (empty means RabbitMQ generates a unique name)
@@ -175,8 +161,12 @@ func main() {
 		log.Fatal("Error consuming messages from RabbitMQ:", err)
 	}
 	fmt.Println("Waiting for migration tasks. To exit press CTRL+C")
-
+	var count = 0
+	var res = true
 	for delivery := range messages {
-		handleDelivery(delivery)
+		res = handleDelivery(delivery, count)
+		if res {
+			count += 1
+		}
 	}
 }

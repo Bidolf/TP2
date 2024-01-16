@@ -2,7 +2,7 @@ import sys
 import time
 
 POLLING_FREQ = int(sys.argv[1]) if len(sys.argv) >= 2 else 60
-ENTITIES_PER_ITERATION = int(sys.argv[2]) if len(sys.argv) >= 3 else 10
+ENTITIES_PER_ITERATION = int(sys.argv[2]) if len(sys.argv) >= 3 else 20
 
 if __name__ == "__main__":
 
