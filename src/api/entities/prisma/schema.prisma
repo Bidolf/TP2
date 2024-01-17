@@ -7,15 +7,35 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_REL_URL")
 }
 
-model Teacher {
-  name       String   @id
-  city       String
-  createdOn  DateTime @default(now()) @map("created_on")
-  updatedOn  DateTime @updatedAt @map("updated_on")
 
-  @@map("teachers")
+model Sighting {
+  id                      String      @id
+  ufo_shape_ref           String
+  date_encounter          String?
+  time_encounter          String?
+  season_encounter        String?
+  date_documented         String?
+  country                 String?
+  region                  String?
+  locale                  String?
+  location_geometry       Json?
+  encounter_duration_text  String?
+  encounter_duration_seconds Int?
+  description             String?
+  created_on              DateTime   @default(now())
+  updated_on              DateTime   @default(now())
+
+  @@map(name: "sightings")
 }
 
+model Ufo_shape {
+  id         String     @id
+  shape_name String?
+  created_on DateTime   @default(now())
+  updated_on DateTime   @default(now())
+
+  @@map(name: "ufo_shapes")
+}
