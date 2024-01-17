@@ -1,19 +1,18 @@
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS POSTGIS;
 CREATE EXTENSION IF NOT EXISTS POSTGIS_TOPOLOGY;
 
 CREATE TABLE public.sightings (
-	id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-	ufo_shape_ref UUID NOT NULL,
-    date_encounter DATE,
-    time_encounter TIME,
+	id VARCHAR(250)PRIMARY KEY,
+	ufo_shape_ref VARCHAR(250) NOT NULL,
+    date_encounter VARCHAR(250),
+    time_encounter VARCHAR(250),
     season_encounter VARCHAR(250),
-    date_documented DATE,
+    date_documented VARCHAR(250),
     country VARCHAR(250),
     region VARCHAR(250),
     locale VARCHAR(250),
     location_geometry GEOMETRY(Point, 4326), /*4326 represents the SRID (Spatial Reference ID) for WGS 84, which is commonly used for GPS coordinates. so that we can know that point has longitude and latitude*/
-    encounter_duration_text VARCHAR(255),
+    encounter_duration_text VARCHAR(250),
     encounter_duration_seconds INTEGER,
     description TEXT,
 	created_on      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -21,8 +20,8 @@ CREATE TABLE public.sightings (
 );
 
 CREATE TABLE public.ufo_shapes (
-	id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    shape_name VARCHAR(255) NOT NULL,
+	id VARCHAR(250) PRIMARY KEY,
+    shape_name VARCHAR(250),
 	created_on      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 	updated_on      TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

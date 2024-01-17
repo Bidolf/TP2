@@ -17,25 +17,25 @@ import (
 )
 
 type DateTimeEncounterType struct {
-	Date   string `xml:"Date"`
-	Time   string `xml:"Time"`
+	date   string `xml:"Date"`
+	time   string `xml:"Time"`
 	Season string `xml:"Season"`
 }
 
 type DateDocumentedType struct {
-	Date string `xml:",innerxml"`
+	date string `xml:",innerxml"`
 }
 
 type LocationType struct {
 	Country    string `xml:"Country"`
 	Region     string `xml:"Region"`
-	Locale     string `xml:"Locale"`
+	Locality     string `xml:"Locale"`
 	Latitude   string `xml:"Latitude"`
 	Longitude  string `xml:"Longitude"`
 }
 
 type EncounterDurationType struct {
-	Text              string `xml:"Text"`
+	text              string `xml:"Text"`
 	SecondsApproximate int    `xml:"SecondsApproximate"`
 }
 

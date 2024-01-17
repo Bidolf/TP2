@@ -11,3 +11,4 @@ aiohttp
 daemon
 lockfile
 pika
+uuid

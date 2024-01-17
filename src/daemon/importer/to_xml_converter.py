@@ -2,7 +2,7 @@ from datetime import datetime
 import xml.dom.minidom as md
 from lxml import etree as ET
 from reader import CSVReader
-
+import uuid
 
 class CSVtoXMLConverter:
 
@@ -44,19 +44,19 @@ class CSVtoXMLConverter:
         sightings = ET.SubElement(root, 'Sightings')
         ufo_shapes = ET.SubElement(root, 'Ufo-shapes')
         ufo_shapes_dict = {}
+        namespace_uuid = uuid.NAMESPACE_DNS
         count = 0
-
         for row in csv:
             if row.get('UFO_shape') not in ufo_shapes_dict:
-                count += 1
-                ufo_shape_id = count
-                ufo_shape = ET.SubElement(ufo_shapes, 'Ufo-shape', id="_" + str(ufo_shape_id))
+                ufo_shape_id = str(uuid.uuid5(namespace_uuid, row.get('UFO_shape')))
+                ufo_shape = ET.SubElement(ufo_shapes, 'Ufo-shape', id=ufo_shape_id)
                 ufo_shape.text = row.get('UFO_shape')
                 ufo_shapes_dict[row.get('UFO_shape')] = ufo_shape_id
             else:
                 ufo_shape_id = ufo_shapes_dict[row.get('UFO_shape')]
-
-            sighting = ET.SubElement(sightings, "Sighting", id="_" + row.get(''), ufo_shape_ref="_" + str(ufo_shape_id))
+            count += 1
+            sighting_id = str(uuid.uuid5(namespace_uuid, str(count)))
+            sighting = ET.SubElement(sightings, "Sighting", id=sighting_id, ufo_shape_ref=ufo_shape_id)
 
             date_time_encounter = ET.SubElement(sighting, "DateTimeEncounter")
             date = ET.SubElement(date_time_encounter, "Date")
