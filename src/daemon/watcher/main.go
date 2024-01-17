@@ -239,10 +239,11 @@ func main() {
     sightingCounter := 0
     shapeCounter := 0
     fileCounter := 0
+    importedDocumentsTable := "imported_documents"
 	for range ticker.C {
         fmt.Println("ticker is ticking")
 		// Query for new entries
-		rows, err := db.Query("SELECT id, file_name, xml, active, created_on FROM imported_documents")
+		rows, err := db.Query("SELECT id, file_name, xml, active, scanned, created_on FROM %s", importedDocumentsTable)
 		if err != nil {
 			fmt.Printf("Error querying database: %s\n", err)
 			continue
@@ -258,44 +259,56 @@ func main() {
 			var fileName string
 			var xmlData string
 			var isActive bool
+			var wasScanned bool
 			var createdOn time.Time
-			if err := rows.Scan(&id, &fileName, &xmlData, &isActive, &createdOn); err != nil {
+			if err := rows.Scan(&id, &fileName, &xmlData, &isActive, &wasScanned, &createdOn); err != nil {
 				fmt.Printf("Error scanning row: %s\n", err)
 				continue
 			}
 
             // Check if this entry should be analized
             if(isActive){
-                if(createdOn.After(lastCheckedTime)){
-                    fmt.Printf("file name: %s, Created On: %s\n", fileName, createdOn)
-                    var ufoData UfoData
+                if(!wasScanned){
+                    if(createdOn.After(lastCheckedTime)){
+                        fmt.Printf("file name: %s, Created On: %s\n", fileName, createdOn)
+                        var ufoData UfoData
 
-                    // Unmarshal XML data into struct
-                    err := xml.Unmarshal([]byte(xmlData), &ufoData)
-                    if err != nil {
-                        log.Fatal(err)
-                    }
-
-                    // Extract every Sighting from Sightings
-                    for _, sighting := range ufoData.Sightings {
-                        err := sendEntityToRabbitMQ(ch, entityImportRoutingKey, "sighting", sighting)
+                        // Unmarshal XML data into struct
+                        err := xml.Unmarshal([]byte(xmlData), &ufoData)
                         if err != nil {
-                            log.Println(err)
-                            continue
+                            log.Fatal(err)
                         }
-                        sightingCounter += 1
-                    }
 
-                    // Extract every Ufo-shape from Ufo-shapes
-                    for _, ufoShape := range ufoData.UfoShapes.UfoShapes {
-                        err := sendEntityToRabbitMQ(ch, entityImportRoutingKey, "ufo_shape", ufoShape)
-                        if err != nil {
-                            log.Println(err)
-                            continue
+                        // Extract every Sighting from Sightings
+                        for _, sighting := range ufoData.Sightings {
+                            err := sendEntityToRabbitMQ(ch, entityImportRoutingKey, "sighting", sighting)
+                            if err != nil {
+                                log.Println(err)
+                                continue
+                            }
+                            sightingCounter += 1
                         }
-                        shapeCounter += 1
+
+                        // Extract every Ufo-shape from Ufo-shapes
+                        for _, ufoShape := range ufoData.UfoShapes.UfoShapes {
+                            err := sendEntityToRabbitMQ(ch, entityImportRoutingKey, "ufo_shape", ufoShape)
+                            if err != nil {
+                                log.Println(err)
+                                continue
+                            }
+                            shapeCounter += 1
+                        }
+
+                        updateScannedQuery := fmt.Sprintf("UPDATE %s SET scanned=true WHERE id=$1", importedDocumentsTable)
+                        _, err := db.Exec(updateScannedQuery, id)
+                        if err != nil {
+                            log.Printf("Error: Could not update variable \"scanned\" on line with id \"%d\"", id)
+                            continue;
+                        }
+
+                        fileCounter += 1
+
                     }
-                    fileCounter += 1
                 }
             }
 		}
