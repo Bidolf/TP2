@@ -1,11 +1,13 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { TeachersModule } from './teachers/teachers.module';
+import { Sightings_ufo_shapesService } from './sightings_ufo_shapes/sightings_ufo_shapes.service';
+import { SightingsUfoShapesController } from './sightings_ufo_shapes/sightings_ufo_shapes.controller';
+import { SightingsUfoShapesModule } from './sightings_ufo_shapes/sightings_ufo_shapes.module';
 
 @Module({
-  imports: [TeachersModule],
-  controllers: [AppController],
-  providers: [AppService],
+  imports: [SightingsUfoShapesModule],
+  controllers: [AppController, SightingsUfoShapesController],
+  providers: [AppService, Sightings_ufo_shapesService],
 })
 export class AppModule {}

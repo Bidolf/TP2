@@ -58,7 +58,7 @@ func initialize() {
 
 func migrateData(body []byte) error {
 	// URL of the API endpoint for sightings
-	apiURL := "http://your-api-entities.com/api/sightings"
+	apiURL := "http://localhost:20001/api/sightings_ufo_shapes"
 	resp, err := http.Post(apiURL, "application/json", bytes.NewBuffer(body))
 	if err != nil {
 		return fmt.Errorf("Error sending request to API: %v", err)
