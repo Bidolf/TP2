@@ -146,6 +146,7 @@ func sendEntityToRabbitMQ(ch *amqp.Channel, routingKey string, entityType string
 	if err != nil {
 		return err
 	}
+	fmt.Println(string(entityJSON))
 
 	// Publish message to RabbitMQ
 	err = ch.Publish("", routingKey, false, false, amqp.Publishing{

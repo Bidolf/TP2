@@ -14,9 +14,8 @@ RABBITMQ_DEFAULT_VHOST = sys.argv[4] if len(sys.argv) >= 5 else "is"
 RABBITMQ_DEFAULT_USER = sys.argv[5] if len(sys.argv) >= 6 else "is"
 RABBITMQ_DEFAULT_PASS = sys.argv[6] if len(sys.argv) >= 7 else "is"
 
-EXT_PORT_API_GIS = sys.argv[7] if len(sys.argv) >= 8 else "20002"
-API_PORT = sys.argv[8] if len(sys.argv) >= 9 else "8080"
-HOSTNAME = 'http://' + EXT_PORT_API_GIS + ':' + API_PORT
+API_PORT = sys.argv[7] if len(sys.argv) >= 8 else "8080"
+HOSTNAME = 'http://api-gis:' + API_PORT
 
 
 def update_entity(entity_json):
