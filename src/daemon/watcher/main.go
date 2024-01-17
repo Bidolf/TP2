@@ -243,7 +243,8 @@ func main() {
 	for range ticker.C {
         fmt.Println("ticker is ticking")
 		// Query for new entries
-		rows, err := db.Query("SELECT id, file_name, xml, active, scanned, created_on FROM %s", importedDocumentsTable)
+		importDocumentsQuery := "SELECT id, file_name, xml, active, scanned, created_on FROM " + importedDocumentsTable
+		rows, err := db.Query(importDocumentsQuery)
 		if err != nil {
 			fmt.Printf("Error querying database: %s\n", err)
 			continue
