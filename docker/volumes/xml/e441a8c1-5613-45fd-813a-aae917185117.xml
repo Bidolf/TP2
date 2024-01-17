@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Ufo><Sightings><Sighting id="b04965e6-a9bb-591f-8f8a-1adcb2c8dc39" ufo_shape_ref="83b14e7c-9700-5398-a978-94eed6e96e2c">
+			<DateTimeEncounter>
+				<Date>1949-10-10</Date>
+				<Time>20:30:00</Time>
+				<Season>Autumn</Season>
+			</DateTimeEncounter>
+			<DateDocumented>2004-04-27</DateDocumented>
+			<Location>
+				<Country>United States</Country>
+				<Region>Texas</Region>
+				<Locale>San Marcos</Locale>
+				<Latitude>29.8830556</Latitude>
+				<Longitude>-97.9411111</Longitude>
+			</Location>
+			<EncounterDuration>
+				<Text>45 minutes</Text>
+				<SecondsApproximate>2700</SecondsApproximate>
+			</EncounterDuration>
+			<Description>This event took place in early fall around 1949-50. It occurred after a Boy Scout meeting in the Baptist Church. The Baptist Church sit</Description>
+		</Sighting>
+		</Sightings></Ufo>

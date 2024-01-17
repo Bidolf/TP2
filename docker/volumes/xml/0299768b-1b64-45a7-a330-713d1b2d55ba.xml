@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Ufo><Sightings><Sighting id="e99caacd-6c45-5906-bd9f-b79e62f25963" ufo_shape_ref="f242894e-9b1a-5faa-9bb4-9be9fa449a4f">
+			<DateTimeEncounter>
+				<Date>1965-10-10</Date>
+				<Time>23:45:00</Time>
+				<Season>Autumn</Season>
+			</DateTimeEncounter>
+			<DateDocumented>1999-10-02</DateDocumented>
+			<Location>
+				<Country>United States</Country>
+				<Region>Connecticut</Region>
+				<Locale>Norwalk</Locale>
+				<Latitude>41.1175</Latitude>
+				<Longitude>-73.4083333</Longitude>
+			</Location>
+			<EncounterDuration>
+				<Text>20 minutes</Text>
+				<SecondsApproximate>1200</SecondsApproximate>
+			</EncounterDuration>
+			<Description>A bright orange color changing to reddish color disk/saucer was observed hovering above power transmission lines.</Description>
+		</Sighting>
+		</Sightings></Ufo>

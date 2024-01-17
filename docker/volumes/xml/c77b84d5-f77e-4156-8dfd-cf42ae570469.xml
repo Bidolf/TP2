@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Ufo><Sightings><Sighting id="4b166dbe-d99d-5091-abdd-95b83330ed3a" ufo_shape_ref="35d4f7fe-6a47-59ea-b221-c07458eefa9f">
+			<DateTimeEncounter>
+				<Date>1949-10-10</Date>
+				<Time>21:00:00</Time>
+				<Season>Autumn</Season>
+			</DateTimeEncounter>
+			<DateDocumented>2005-12-16</DateDocumented>
+			<Location>
+				<Country>United States</Country>
+				<Region>Texas</Region>
+				<Locale>Bexar County</Locale>
+				<Latitude>29.38421</Latitude>
+				<Longitude>-98.581082</Longitude>
+			</Location>
+			<EncounterDuration>
+				<Text>1-2 hrs</Text>
+				<SecondsApproximate>7200</SecondsApproximate>
+			</EncounterDuration>
+			<Description>1949 Lackland AFB&amp;#44 TX.  Lights racing across the sky &amp;amp; making 90 degree turns on a dime.</Description>
+		</Sighting>
+		</Sightings></Ufo>

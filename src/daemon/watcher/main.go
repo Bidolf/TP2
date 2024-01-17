@@ -300,7 +300,7 @@ func main() {
                         }
 
                         updateScannedQuery := fmt.Sprintf("UPDATE %s SET scanned=true WHERE id=$1", importedDocumentsTable)
-                        _, err := db.Exec(updateScannedQuery, id)
+                        _, err = db.Exec(updateScannedQuery, id)
                         if err != nil {
                             log.Printf("Error: Could not update variable \"scanned\" on line with id \"%d\"", id)
                             continue;
