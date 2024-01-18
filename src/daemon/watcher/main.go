@@ -51,11 +51,7 @@ type Sighting struct {
 
 type UfoShape struct {
     ID string `xml:"id,attr"`
-<<<<<<< Updated upstream
-    Value string `xml:",chardata"`
-=======
 	Value string `xml:",chardata"`
->>>>>>> Stashed changes
 }
 
 type UfoShapes struct {

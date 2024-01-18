@@ -41,7 +41,7 @@ def update_entity(entity_json):
 def get_coordinates(country, region, locale):
     api_url = "https://nominatim.openstreetmap.org/search"
 
-    query = f"{locale}, {region}, {country}"
+    query = f"{country}, {region}, {locale}"
 
     # Parameters for the request
     params = {
