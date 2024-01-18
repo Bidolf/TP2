@@ -57,25 +57,33 @@ func initialize() {
 }
 
 func migrateData(body []byte) error {
-	// URL of the API endpoint for sightings
-	apiURL := "http://localhost:20001/api/sightings_ufo_shapes"
-	resp, err := http.Post(apiURL, "application/json", bytes.NewBuffer(body))
-	if err != nil {
-		return fmt.Errorf("Error sending request to API: %v", err)
-	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			fmt.Printf("Error closing response body: %v\n", err)
+	maxRetries := 10000
+	retryDelay := time.Second * 5
+	for attempt := 1; attempt <= maxRetries; attempt++ {
+		// Attempt to connect to the API
+		apiURL := "http://api-entities:8080/api/sightingsufoshapes"
+		resp, err := http.Post(apiURL, "application/json", bytes.NewBuffer(body))
+		if err == nil {
+			fmt.Println("Connection successful!!!")
+			defer closeResponseBody(resp.Body)
+			// Check the response status
+			if resp.StatusCode == http.StatusCreated {
+				fmt.Printf("Sighting record created successfully! Status: %d, Message: %s\n", resp.StatusCode, resp.Status)
+			} else {
+				return fmt.Errorf("Error creating sighting record. Status: %d, Message: %s", resp.StatusCode, resp.Status)
+			}
+			return nil
 		}
-	}(resp.Body)
-	// Check the response status
-	if resp.StatusCode == http.StatusCreated {
-		fmt.Printf("Sighting record created successfully! Status: %d, Message: %s\n", resp.StatusCode, resp.Status)
-	} else {
-		return fmt.Errorf("Error creating sighting record. Status: %d, Message: %s", resp.StatusCode, resp.Status)
+		fmt.Printf("Error sending request to API (attempt %d): %v\n", attempt, err)
+		time.Sleep(retryDelay)
 	}
-	return nil
+	return fmt.Errorf("Failed to send request to API after %d attempts", maxRetries)
+}
+
+func closeResponseBody(Body io.ReadCloser) {
+    if err := Body.Close(); err != nil {
+        fmt.Printf("Error closing response body: %v\n", err)
+    }
 }
 
 func handleDelivery(delivery amqp.Delivery, count int) bool {

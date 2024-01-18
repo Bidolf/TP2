@@ -40,7 +40,6 @@ services:
     build: docker/images/golang
     volumes:
       - ./src/daemon/migrator:/usr/src/app
-      - ./docker/volumes/xml:/xml
     environment:
       USE_DEV_MODE: ${USE_DEV_MODE}
       POLLING_FREQ: ${POLLING_FREQ}
@@ -48,9 +47,6 @@ services:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
       ROUTING_KEY_ENTITY_IMPORT: ${ROUTING_KEY_ENTITY_IMPORT}
-    depends_on:
-      - db-xml
-      - db-rel
 
   watcher:
     container_name: watcher

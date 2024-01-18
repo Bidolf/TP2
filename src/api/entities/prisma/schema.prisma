@@ -11,6 +11,7 @@ datasource db {
 }
 
 
+
 model Sighting {
   id                      String      @id
   ufo_shape_ref           String
@@ -21,12 +22,10 @@ model Sighting {
   country                 String?
   region                  String?
   locale                  String?
-  location_geometry       Json?
+  location_geometry       String?
   encounter_duration_text  String?
   encounter_duration_seconds Int?
   description             String?
-  created_on              DateTime   @default(now())
-  updated_on              DateTime   @default(now())
 
   @@map(name: "sightings")
 }
@@ -34,8 +33,6 @@ model Sighting {
 model Ufo_shape {
   id         String     @id
   shape_name String?
-  created_on DateTime   @default(now())
-  updated_on DateTime   @default(now())
 
   @@map(name: "ufo_shapes")
 }

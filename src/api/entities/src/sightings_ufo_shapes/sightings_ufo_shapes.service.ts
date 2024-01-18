@@ -1,5 +1,5 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient} from '@prisma/client';
 @Injectable()
 export class Sightings_ufo_shapesService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   async onModuleInit() {
@@ -11,28 +11,27 @@ export class Sightings_ufo_shapesService extends PrismaClient implements OnModul
     this.prisma = new PrismaClient();
   }
   async createSightingOrUfoShape(message: any) {
+    console.log('Request Body:', message);
     if (message.type === 'sighting' && message.content) {
       const content = message.content;
       const sighting = await this.prisma.sighting.create({
         data: {
           id: content.ID,
           ufo_shape_ref: content.UfoShapeRef,
-          date_encounter: content.DateTimeEncounter.date,
-          time_encounter: content.DateTimeEncounter.time,
+          date_encounter: content.DateTimeEncounter.Data,
+          time_encounter: content.DateTimeEncounter.Tempo,
           season_encounter: content.DateTimeEncounter.Season,
-          date_documented: content.DateDocumented.date,
+          date_documented: content.DateDocumented.Data,
           country: content.Location.Country,
           region: content.Location.Region,
           locale: content.Location.Locality,
-          location_geometry: {
-            latitude: content.Location.Latitude,
-            longitude: content.Location.Longitude,
-          },
-          encounter_duration_text: content.EncounterDuration.text,
+          location_geometry: `POINT(${content.Location.Latitude} ${content.Location.Longitude})`,
+          encounter_duration_text: content.EncounterDuration.Texto,
           encounter_duration_seconds: content.EncounterDuration.SecondsApproximate,
           description: content.Description,
         },
       });
+      console.log(sighting)
       return sighting;
     }else if (message.type === 'ufo_shape' && message.content) {
       const content = message.content;
@@ -42,11 +41,16 @@ export class Sightings_ufo_shapesService extends PrismaClient implements OnModul
           shape_name: content.Value,
         },
       });
+      console.log(ufoShape)
       return ufoShape;
     }else {
-      // Handle other message types or invalid messages
+      console.log('Invalid message format')
       return { message: 'Invalid message format' };
     }
+  }
+  async getAllSightings() {
+    // Implement the logic to retrieve all sightings
+    return this.prisma.sighting.findMany();
   }
   async onModuleDestroy() {
     await this.$disconnect();
