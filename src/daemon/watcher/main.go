@@ -51,7 +51,11 @@ type Sighting struct {
 
 type UfoShape struct {
     ID string `xml:"id,attr"`
+<<<<<<< Updated upstream
     Value string `xml:",chardata"`
+=======
+	Value string `xml:",chardata"`
+>>>>>>> Stashed changes
 }
 
 type UfoShapes struct {
@@ -146,6 +150,7 @@ func sendEntityToRabbitMQ(ch *amqp.Channel, routingKey string, entityType string
 	if err != nil {
 		return err
 	}
+
 	fmt.Println(string(entityJSON))
 
 	// Publish message to RabbitMQ

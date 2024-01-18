@@ -96,17 +96,19 @@ def main():
         method_frame, header_frame, body = channel.basic_get(queue=ROUTING_KEY_GEO_DATA_UPDATE, auto_ack=True)
         if method_frame:
             entity_json = json.loads(body.decode('utf-8'))
-            print("Received JSON data:", entity_json)
+            # print("Received JSON data:", entity_json)
+
         else:
             print("No more messages in the queue.")
             break
 
-    # !TODO: 1- Use api-gis to retrieve a fixed amount of entities without coordinates (e.g. 100 entities per iteration, use ENTITIES_PER_ITERATION)
-    # !TODO: 2- Use the entity information to retrieve coordinates from an external API
-    # !TODO: 3- Submit the changes
     time.sleep(POLLING_FREQ)
 
 
 if __name__ == "__main__":
-    with daemon.DaemonContext():
-        main()
+    try:
+        while True:
+            main()
+    except KeyboardInterrupt:
+        sys.exit(0)
+
