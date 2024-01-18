@@ -17,13 +17,13 @@ import (
 )
 
 type DateTimeEncounterType struct {
-	date   string `xml:"Date"`
-	time   string `xml:"Time"`
+	Data   string `xml:"Date"`
+	Tempo   string `xml:"Time"`
 	Season string `xml:"Season"`
 }
 
 type DateDocumentedType struct {
-	date string `xml:",innerxml"`
+	Data string `xml:",innerxml"`
 }
 
 type LocationType struct {
@@ -35,7 +35,7 @@ type LocationType struct {
 }
 
 type EncounterDurationType struct {
-	text              string `xml:"Text"`
+	Texto              string `xml:"Text"`
 	SecondsApproximate int    `xml:"SecondsApproximate"`
 }
 
