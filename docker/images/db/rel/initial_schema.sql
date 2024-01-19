@@ -4,10 +4,10 @@ CREATE EXTENSION IF NOT EXISTS POSTGIS_TOPOLOGY;
 CREATE TABLE public.sightings (
 	id VARCHAR(250)PRIMARY KEY,
 	ufo_shape_ref VARCHAR(250) NOT NULL,
-    date_encounter DATE,
-    time_encounter TIME,
+    date_encounter VARCHAR(250),
+    time_encounter VARCHAR(250),
     season_encounter VARCHAR(250),
-    date_documented DATE,
+    date_documented VARCHAR(250),
     country VARCHAR(250),
     region VARCHAR(250),
     locale VARCHAR(250),
