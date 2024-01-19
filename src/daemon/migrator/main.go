@@ -61,7 +61,7 @@ func migrateData(body []byte) error {
 	retryDelay := time.Second * 5
 	for attempt := 1; attempt <= maxRetries; attempt++ {
 		// Attempt to connect to the API
-		apiURL := "http://api-entities:8080/api/sightingsufoshapes"
+		apiURL := "http://api-entities:8080/api/sightings_ufo_shapes"
 		resp, err := http.Post(apiURL, "application/json", bytes.NewBuffer(body))
 		if err == nil {
 			fmt.Println("Connection successful!!!")

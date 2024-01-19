@@ -11,7 +11,6 @@ export class Sightings_ufo_shapesService extends PrismaClient implements OnModul
     this.prisma = new PrismaClient();
   }
   async createSightingOrUfoShape(message: any) {
-    console.log('Request Body:', message);
     if (message.type === 'sighting' && message.content) {
       const content = message.content;
       const sighting = await this.prisma.sighting.create({
@@ -44,13 +43,27 @@ export class Sightings_ufo_shapesService extends PrismaClient implements OnModul
       console.log(ufoShape)
       return ufoShape;
     }else {
-      console.log('Invalid message format')
-      return { message: 'Invalid message format' };
+      throw new Error(`Invalid message format`);
     }
   }
+
+  async getSightingById(id: string)  {
+    const sighting = await this.prisma.sighting.findUnique({
+      where: {
+        id: id,
+      },
+    });
+    if (!sighting) {
+      throw new Error(`Sighting with ID ${id} not found`);
+    }
+    return sighting;
+  }
+
   async getAllSightings() {
-    // Implement the logic to retrieve all sightings
     return this.prisma.sighting.findMany();
+  }
+  async getAllShapes() {
+    return this.prisma.ufo_shape.findMany();
   }
   async onModuleDestroy() {
     await this.$disconnect();
