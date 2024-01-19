@@ -1,6 +1,6 @@
 from itertools import groupby
 from operator import itemgetter
-from src.server.rpc.db_functions.retrieve_xml_group_by_file import retrieve_xml_group_by_file
+from db_functions.retrieve_xml_group_by_file import retrieve_xml_group_by_file
 
 from lxml import etree
 

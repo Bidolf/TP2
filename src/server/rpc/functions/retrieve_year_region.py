@@ -1,6 +1,5 @@
 from lxml import etree
-from src.server.rpc.db_functions.retrieve_xml import retrieve_xml
-
+from db_functions.retrieve_xml import retrieve_xml
 
 def retrieve_year_region(region, year, singleresult):
     retrieve_info = []
