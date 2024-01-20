@@ -1,24 +1,24 @@
 package main
 
 import (
-    "database/sql"
+	"database/sql"
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
-	"os"
 	"io/ioutil"
 	"log"
-	"time"
-	"strings"
+	"os"
 	"strconv"
+	"strings"
+	"time"
 
-    amqp "github.com/rabbitmq/amqp091-go"
 	_ "github.com/lib/pq"
+	amqp "github.com/rabbitmq/amqp091-go"
 )
 
 type DateTimeEncounterType struct {
 	Data   string `xml:"Date"`
-	Tempo   string `xml:"Time"`
+	Tempo  string `xml:"Time"`
 	Season string `xml:"Season"`
 }
 
@@ -32,11 +32,11 @@ type EncounterDurationType struct {
 }
 
 type LocationXMLType struct {
-	Country    string `xml:"Country"`
-	Region     string `xml:"Region"`
-	Locality     string `xml:"Locale"`
-	Latitude   string `xml:"Latitude"`
-	Longitude  string `xml:"Longitude"`
+	Country   string `xml:"Country"`
+	Region    string `xml:"Region"`
+	Locality  string `xml:"Locale"`
+	Latitude  string `xml:"Latitude"`
+	Longitude string `xml:"Longitude"`
 }
 
 type SightingXML struct {
@@ -50,10 +50,10 @@ type SightingXML struct {
 }
 
 type LocationType struct {
-	Country             string
-	Region              string
-	Locality            string
-	LocationGeometry    *string
+	Country          string
+	Region           string
+	Locality         string
+	LocationGeometry *string
 }
 
 type Sighting struct {
@@ -67,17 +67,17 @@ type Sighting struct {
 }
 
 type UfoShape struct {
-    ID string `xml:"id,attr"`
+	ID    string `xml:"id,attr"`
 	Value string `xml:",chardata"`
 }
 
 type UfoShapes struct {
-    UfoShapes []UfoShape `xml:"Ufo-shape"`
+	UfoShapes []UfoShape `xml:"Ufo-shape"`
 }
 
 type UfoData struct {
-	Sightings  []SightingXML `xml:"Sightings>Sighting"`
-	UfoShapes  UfoShapes  `xml:"Ufo-shapes"`
+	Sightings []SightingXML `xml:"Sightings>Sighting"`
+	UfoShapes UfoShapes     `xml:"Ufo-shapes"`
 }
 
 type Entity struct {
@@ -116,8 +116,8 @@ func dialWithRetry(url string) (*amqp.Connection, error) {
 
 func sendEntityToRabbitMQ(ch *amqp.Channel, routingKey string, entityType string, entityContent interface{}) error {
 
-	 entity := Entity{
-		Type: entityType,
+	entity := Entity{
+		Type:    entityType,
 		Content: entityContent,
 	}
 
@@ -137,13 +137,13 @@ func sendEntityToRabbitMQ(ch *amqp.Channel, routingKey string, entityType string
 		return err
 	}
 
-// 	fmt.Println("Sent message of ",entityType,"to ",routingKey)
+	// 	fmt.Println("Sent message of ",entityType,"to ",routingKey)
 
 	return nil
 }
 
-func declareQueue(ch *amqp.Channel, queueName string){
-    _, err := ch.QueueDeclare(
+func declareQueue(ch *amqp.Channel, queueName string) {
+	_, err := ch.QueueDeclare(
 		queueName, // Queue name
 		true,      // Durable
 		false,     // Delete when unused
@@ -157,26 +157,26 @@ func declareQueue(ch *amqp.Channel, queueName string){
 }
 
 func main() {
-    fmt.Printf("args: %d\n", len(os.Args[1:]))
-    fmt.Printf("%s\n", os.Args[1:])
-    rabbitUser := os.Args[1]
-    rabbitPassword := os.Args[2]
-    rabbitVHost := os.Args[3]
-    entityImportRoutingKey := os.Args[4]
-    geoDataUpdateRoutingKey := os.Args[5]
-    floatArg6, err := strconv.ParseFloat(os.Args[6], 64)
+	fmt.Printf("args: %d\n", len(os.Args[1:]))
+	fmt.Printf("%s\n", os.Args[1:])
+	rabbitUser := os.Args[1]
+	rabbitPassword := os.Args[2]
+	rabbitVHost := os.Args[3]
+	entityImportRoutingKey := os.Args[4]
+	geoDataUpdateRoutingKey := os.Args[5]
+	floatArg6, err := strconv.ParseFloat(os.Args[6], 64)
 	if err != nil {
 		log.Fatalln("Error:", err)
 		return
 	}
 	pollingFrequency := floatArg6
-    // args for this main are $RABBITMQ_DEFAULT_USER, $RABBITMQ_DEFAULT_PASS, $RABBITMQ_DEFAULT_VHOST,
-    // $ROUTING_KEY_ENTITY_IMPORT, $ROUTING_KEY_GEO_DATA_UPDATE, and $POLLING_FREQ
-    dbConnectionString := "postgres://is:is@db-xml:5432/is?sslmode=disable"
-    rabbitMQURL := fmt.Sprintf("amqp://%s:%s@rabbitmq:5672/%s", rabbitUser, rabbitPassword, rabbitVHost)
+	// args for this main are $RABBITMQ_DEFAULT_USER, $RABBITMQ_DEFAULT_PASS, $RABBITMQ_DEFAULT_VHOST,
+	// $ROUTING_KEY_ENTITY_IMPORT, $ROUTING_KEY_GEO_DATA_UPDATE, and $POLLING_FREQ
+	dbConnectionString := "postgres://is:is@db-xml:5432/is?sslmode=disable"
+	rabbitMQURL := fmt.Sprintf("amqp://%s:%s@rabbitmq:5672/%s", rabbitUser, rabbitPassword, rabbitVHost)
 
-    fmt.Println(dbConnectionString)
-    fmt.Println(rabbitMQURL)
+	fmt.Println(dbConnectionString)
+	fmt.Println(rabbitMQURL)
 
 	// Connect to RabbitMQ
 	rabbitConn, err := dialWithRetry(rabbitMQURL)
@@ -184,23 +184,22 @@ func main() {
 		log.Fatalf("Failed to connect to RabbitMQ: %s", err)
 	}
 	defer rabbitConn.Close()
-    fmt.Println("dialed")
+	fmt.Println("dialed")
 
-    // Open a channel
+	// Open a channel
 	ch, err := rabbitConn.Channel()
 	if err != nil {
 		log.Fatalf("Failed to open a channel: %s", err)
 	}
 	defer ch.Close()
-    fmt.Println("channel connected")
+	fmt.Println("channel connected")
 
 	// Declare a queue for messages
 	declareQueue(ch, entityImportRoutingKey)
-    fmt.Println("\"entity import\" queue declared")
+	fmt.Println("\"entity import\" queue declared")
 
 	declareQueue(ch, geoDataUpdateRoutingKey)
-    fmt.Println("\"update geo data on sighting\" queue declared")
-
+	fmt.Println("\"update geo data on sighting\" queue declared")
 
 	// Connect to PostgreSQL database
 	db, err := sql.Open("postgres", dbConnectionString)
@@ -208,22 +207,21 @@ func main() {
 		log.Fatalf("Failed to connect to the database: %s", err)
 	}
 	defer db.Close()
-    fmt.Println(dbConnectionString)
-    fmt.Println("connected to postgres")
+	fmt.Println(dbConnectionString)
+	fmt.Println("connected to postgres")
 
 	// Regularly check the database for new entries
 	ticker := time.NewTicker(time.Duration(pollingFrequency) * time.Second)
 	defer ticker.Stop()
 
 	// Start time is zero
-    var lastCheckedTime time.Time
+	var lastCheckedTime time.Time
 
-
-    sightingCounter := 0
-    shapeCounter := 0
-    fileCounter := 0
+	sightingCounter := 0
+	shapeCounter := 0
+	fileCounter := 0
 	for range ticker.C {
-        fmt.Println("ticker is ticking")
+		fmt.Println("ticker is ticking")
 		// Query for new entries
 		importDocumentsQuery := "SELECT id, file_name, xml, active, scanned, created_on FROM imported_documents"
 		rows, err := db.Query(importDocumentsQuery)
@@ -233,14 +231,14 @@ func main() {
 		}
 		defer rows.Close()
 
-        fmt.Println("last checked time: ", lastCheckedTime)
-        sightingCounter = 0
-        shapeCounter = 0
-        fileCounter = 0
+		fmt.Println("last checked time: ", lastCheckedTime)
+		sightingCounter = 0
+		shapeCounter = 0
+		fileCounter = 0
 
-        var allUfoShapesToImport []UfoShape
-        var allSightingsToImport []SightingXML
-        var allSightingsToUpdateGeoData []SightingXML
+		var allUfoShapesToImport []UfoShape
+		var allSightingsToImport []SightingXML
+		var allSightingsToUpdateGeoData []SightingXML
 
 		for rows.Next() {
 			var id int
@@ -254,128 +252,130 @@ func main() {
 				continue
 			}
 
-            // Check if this entry should be analized
-            if(isActive){
-                if(!wasScanned){
-                    if(createdOn.After(lastCheckedTime)){
-                        fmt.Printf("file name: %s, Created On: %s\n", fileName, createdOn)
-                        var ufoData UfoData
+			// Check if this entry should be analized
+			if isActive {
+				if !wasScanned {
+					if createdOn.After(lastCheckedTime) {
+						fmt.Printf("file name: %s, Created On: %s\n", fileName, createdOn)
+						var ufoData UfoData
 
-                        // Unmarshal XML data into struct
-                        err := xml.Unmarshal([]byte(xmlData), &ufoData)
-                        if err != nil {
-                            log.Fatal(err)
-                        }
+						// Unmarshal XML data into struct
+						err := xml.Unmarshal([]byte(xmlData), &ufoData)
+						if err != nil {
+							log.Fatal(err)
+						}
 
-                        // Extract every Sighting from Sightings
-                        for _, sightingXML := range ufoData.Sightings {
+						// Extract every Sighting from Sightings
+						for _, sightingXML := range ufoData.Sightings {
 
-                            latitude := sightingXML.Location.Latitude
-                            longitude := sightingXML.Location.Longitude
+							latitude := sightingXML.Location.Latitude
+							longitude := sightingXML.Location.Longitude
 
-                            var locationGeoData *string
-                            var pointString = ""
+							var locationGeoData *string
+							var pointString = ""
 
-                            if (latitude != "N/A" && longitude != "N/A"){
-                                pointString = "POINT("+longitude+" "+latitude+")"
-                                locationGeoData = &pointString
-                            }
+							if latitude != "N/A" && longitude != "N/A" {
+								pointString = "POINT(" + longitude + " " + latitude + ")"
+								locationGeoData = &pointString
+							}
 
-//                             sightingGeoData := Sighting{
-//                                 ID: sightingXML.ID,
-//                                 UfoShapeRef: sightingXML.UfoShapeRef,
-//                                 DateTimeEncounter: sightingXML.DateTimeEncounter,
-//                                 DateDocumented: sightingXML.DateDocumented,
-//                                 Location: LocationType{
-//                                     Country: sightingXML.Location.Country,
-//                                     Region: sightingXML.Location.Region,
-//                                     Locality: sightingXML.Location.Locality,
-//                                     LocationGeometry: locationGeoData,
-//                                 },
-//                                 EncounterDuration: sightingXML.EncounterDuration,
-//                                 Description: sightingXML.Description,
-//                             }
+							//                             sightingGeoData := Sighting{
+							//                                 ID: sightingXML.ID,
+							//                                 UfoShapeRef: sightingXML.UfoShapeRef,
+							//                                 DateTimeEncounter: sightingXML.DateTimeEncounter,
+							//                                 DateDocumented: sightingXML.DateDocumented,
+							//                                 Location: LocationType{
+							//                                     Country: sightingXML.Location.Country,
+							//                                     Region: sightingXML.Location.Region,
+							//                                     Locality: sightingXML.Location.Locality,
+							//                                     LocationGeometry: locationGeoData,
+							//                                 },
+							//                                 EncounterDuration: sightingXML.EncounterDuration,
+							//                                 Description: sightingXML.Description,
+							//                             }
 
-                            allSightingsToImport = append(allSightingsToImport, sightingXML)
-//                             err := sendEntityToRabbitMQ(ch, entityImportRoutingKey, "sighting", sightingXML)
-//                             if err != nil {
-//                                 log.Println(err)
-//                                 continue
-//                             }
+							allSightingsToImport = append(allSightingsToImport, sightingXML)
+							//                             err := sendEntityToRabbitMQ(ch, entityImportRoutingKey, "sighting", sightingXML)
+							//                             if err != nil {
+							//                                 log.Println(err)
+							//                                 continue
+							//                             }
 
-                            if(locationGeoData == nil){
-                                allSightingsToUpdateGeoData = append(allSightingsToUpdateGeoData, sightingXML)
-//                                 err := sendEntityToRabbitMQ(ch, geoDataUpdateRoutingKey, "sighting", sightingXML)
-//                                 if err != nil {
-//                                     log.Println(err)
-//                                     continue
-//                                 }
-                            }
-                            sightingCounter += 1
-                        }
+							if locationGeoData == nil {
+								allSightingsToUpdateGeoData = append(allSightingsToUpdateGeoData, sightingXML)
+								//                                 err := sendEntityToRabbitMQ(ch, geoDataUpdateRoutingKey, "sighting", sightingXML)
+								//                                 if err != nil {
+								//                                     log.Println(err)
+								//                                     continue
+								//                                 }
+							}
+							sightingCounter += 1
+						}
 
-                        // Extract every Ufo-shape from Ufo-shapes
-                        for _, ufoShape := range ufoData.UfoShapes.UfoShapes {
-                            allUfoShapesToImport = append(allUfoShapesToImport, ufoShape)
-//                             err := sendEntityToRabbitMQ(ch, entityImportRoutingKey, "ufo_shape", ufoShape)
-//                             if err != nil {
-//                                 log.Println(err)
-//                                 continue
-//                             }
-                            shapeCounter += 1
-                        }
+						// Extract every Ufo-shape from Ufo-shapes
+						for _, ufoShape := range ufoData.UfoShapes.UfoShapes {
+							allUfoShapesToImport = append(allUfoShapesToImport, ufoShape)
+							//                             err := sendEntityToRabbitMQ(ch, entityImportRoutingKey, "ufo_shape", ufoShape)
+							//                             if err != nil {
+							//                                 log.Println(err)
+							//                                 continue
+							//                             }
+							shapeCounter += 1
+						}
 
-                        updateScannedQuery := "UPDATE imported_documents SET scanned=true WHERE id=$1"
-                        _, err = db.Exec(updateScannedQuery, id)
-                        if err != nil {
-                            log.Printf("Error: Could not update variable \"scanned\" on line with id \"%d\"", id)
-                            continue;
-                        }
+						updateScannedQuery := "UPDATE imported_documents SET scanned=true WHERE id=$1"
+						_, err = db.Exec(updateScannedQuery, id)
+						if err != nil {
+							log.Printf("Error: Could not update variable \"scanned\" on line with id \"%d\"", id)
+							continue
+						}
 
-                        fileCounter += 1
+						fileCounter += 1
 
-                    }
-                }
-            }
+					}
+				}
+			}
 		}
 
-		count := 0
-        for _, ufoShapeToImport := range allUfoShapesToImport{
-            err := sendEntityToRabbitMQ(ch, entityImportRoutingKey, "ufo_shape", ufoShapeToImport)
-            if err != nil {
-                log.Println(err)
-                continue
-            }
-            count += 1
-        }
-        fmt.Println("Sent ",count," messages of ufo_shapes to ",entityImportRoutingKey)
+		if fileCounter != 0 {
+			count := 0
+			for _, ufoShapeToImport := range allUfoShapesToImport {
+				err := sendEntityToRabbitMQ(ch, entityImportRoutingKey, "ufo_shape", ufoShapeToImport)
+				if err != nil {
+					log.Println(err)
+					continue
+				}
+				count += 1
+			}
+			fmt.Println("Sent ", count, " messages of ufo_shapes to ", entityImportRoutingKey)
 
-        count = 0
-        for _, sightingToImport := range allSightingsToImport{
-            err := sendEntityToRabbitMQ(ch, entityImportRoutingKey, "sighting", sightingToImport)
-            if err != nil {
-                log.Println(err)
-                continue
-            }
-            count += 1
-        }
-        fmt.Println("Sent ",count," messages of sightings to ",entityImportRoutingKey)
+			count = 0
+			for _, sightingToImport := range allSightingsToImport {
+				err := sendEntityToRabbitMQ(ch, entityImportRoutingKey, "sighting", sightingToImport)
+				if err != nil {
+					log.Println(err)
+					continue
+				}
+				count += 1
+			}
+			fmt.Println("Sent ", count, " messages of sightings to ", entityImportRoutingKey)
 
-        count = 0
-        for _, sightingToGeoData := range allSightingsToUpdateGeoData{
-            err := sendEntityToRabbitMQ(ch, geoDataUpdateRoutingKey, "sighting", sightingToGeoData)
-            if err != nil {
-                log.Println(err)
-                continue
-            }
-            count += 1
-        }
-        fmt.Println("Sent ",count," messages of ufo_shape to ",entityImportRoutingKey)
+			count = 0
+			for _, sightingToGeoData := range allSightingsToUpdateGeoData {
+				err := sendEntityToRabbitMQ(ch, geoDataUpdateRoutingKey, "sighting", sightingToGeoData)
+				if err != nil {
+					log.Println(err)
+					continue
+				}
+				count += 1
+			}
+			fmt.Println("Sent ", count, " messages of ufo_shapes to ", entityImportRoutingKey)
 
-        fmt.Println("Total:")
-        fmt.Printf("Total:\n Files: %d, Sightings: %d, Shapes: %d", fileCounter, sightingCounter, shapeCounter)
-
+			fmt.Printf("Total Files: %d; Sightings: %d; Shapes: %d", fileCounter, sightingCounter, shapeCounter)
+		} else {
+			fmt.Println("No files found.")
+		}
 		// Update the last checked time to avoid reprocessing old entries
-	    lastCheckedTime = time.Now()
+		lastCheckedTime = time.Now()
 	}
 }
