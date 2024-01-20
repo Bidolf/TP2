@@ -113,20 +113,58 @@ export class Sightings_ufo_shapesService extends PrismaClient implements OnModul
   async deleteUfoShape(id: string) {
     const existingUfoShape = await this.prisma.ufo_shape.findUnique({
         where: { id },
+        include: { sightings: true },
       });
       if (!existingUfoShape) {
         throw new Error(`Ufo shape with ID ${id} not found`);
       }
-       const deleteUfo_shape =await this.prisma.ufo_shape.delete({
-        where: { id },
-      });
-      console.log(deleteUfo_shape)
+      const updateSightings = existingUfoShape.sightings.map((sighting) =>
+      this.prisma.sighting.update({
+       where: { id: sighting.id },
+        data: { ufo_shape_ref: null },
+      })
+   );
+   await Promise.all(updateSightings);
+   const deleteUfoShape = await this.prisma.ufo_shape.delete({
+      where: { id },
+   });
+   console.log(deleteUfoShape);
   }
   async getAllSightings() {
-    return this.prisma.sighting.findMany();
+    const sightings = await this.prisma.sighting.findMany();
+    if (sightings.length === 0) {
+         throw new Error('No sightings found');
+    }
+     return sightings;
   }
   async getAllShapes() {
-    return this.prisma.ufo_shape.findMany();
+    const ufo_shapes = await this.prisma.ufo_shape.findMany();
+    if (ufo_shapes.length === 0) {
+         throw new Error('No ufo_shapes found');
+    }
+     return ufo_shapes;
+
+  }
+
+  async getSightingsByUfoShape(ufoShapeId: string) {
+    const sightings = await this.prisma.sighting.findMany({
+      where: { ufo_shape_ref: ufoShapeId },
+    });
+    if (sightings.length === 0) {
+         throw new Error(`No sightings found for ufoShapeId ${ufoShapeId}`);
+    }
+     return sightings;
+  }
+
+  async getUfoShapeBySightingId(sightingId: string)  {
+    const sighting = await this.prisma.sighting.findUnique({
+      where: { id: sightingId },
+      include: { ufoShape: true },
+    });
+    if (!sighting) {
+      throw new Error(`Sighting with ID ${sightingId} not found`);
+    }
+    return sighting.ufoShape;
   }
   async onModuleDestroy() {
     await this.$disconnect();
