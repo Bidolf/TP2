@@ -145,7 +145,7 @@ func sendEntityToRabbitMQ(ch *amqp.Channel, routingKey string, entityType string
 func declareQueue(ch *amqp.Channel, queueName string){
     _, err := ch.QueueDeclare(
 		queueName, // Queue name
-		false,      // Durable
+		true,      // Durable
 		false,     // Delete when unused
 		false,     // Exclusive
 		false,     // No-wait
@@ -271,34 +271,34 @@ func main() {
                             var locationGeoData *string
                             var pointString = ""
 
-                            if (latitude != "" && longitude != ""){
+                            if (latitude != "N/A" && longitude != "N/A"){
                                 pointString = "POINT("+longitude+" "+latitude+")"
                                 locationGeoData = &pointString
                             }
+//
+//                             sightingGeoData := Sighting{
+//                                 ID: sightingXML.ID,
+//                                 UfoShapeRef: sightingXML.UfoShapeRef,
+//                                 DateTimeEncounter: sightingXML.DateTimeEncounter,
+//                                 DateDocumented: sightingXML.DateDocumented,
+//                                 Location: LocationType{
+//                                     Country: sightingXML.Location.Country,
+//                                     Region: sightingXML.Location.Region,
+//                                     Locality: sightingXML.Location.Locality,
+//                                     LocationGeometry: locationGeoData,
+//                                 },
+//                                 EncounterDuration: sightingXML.EncounterDuration,
+//                                 Description: sightingXML.Description,
+//                             }
 
-                            sightingGeoData := Sighting{
-                                ID: sightingXML.ID,
-                                UfoShapeRef: sightingXML.UfoShapeRef,
-                                DateTimeEncounter: sightingXML.DateTimeEncounter,
-                                DateDocumented: sightingXML.DateDocumented,
-                                Location: LocationType{
-                                    Country: sightingXML.Location.Country,
-                                    Region: sightingXML.Location.Region,
-                                    Locality: sightingXML.Location.Locality,
-                                    LocationGeometry: locationGeoData,
-                                },
-                                EncounterDuration: sightingXML.EncounterDuration,
-                                Description: sightingXML.Description,
-                            }
-
-                            err := sendEntityToRabbitMQ(ch, entityImportRoutingKey, "sighting", sightingGeoData)
+                            err := sendEntityToRabbitMQ(ch, entityImportRoutingKey, "sighting", sightingXML)
                             if err != nil {
                                 log.Println(err)
                                 continue
                             }
 
                             if(locationGeoData == nil){
-                                err := sendEntityToRabbitMQ(ch, geoDataUpdateRoutingKey, "sighting", sightingGeoData)
+                                err := sendEntityToRabbitMQ(ch, geoDataUpdateRoutingKey, "sighting", sightingXML)
                                 if err != nil {
                                     log.Println(err)
                                     continue
