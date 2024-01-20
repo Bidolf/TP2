@@ -26,7 +26,12 @@ type DateDocumentedType struct {
 	Data string `xml:",innerxml"`
 }
 
-type LocationType struct {
+type EncounterDurationType struct {
+	Texto              string `xml:"Text"`
+	SecondsApproximate int    `xml:"SecondsApproximate"`
+}
+
+type LocationXMLType struct {
 	Country    string `xml:"Country"`
 	Region     string `xml:"Region"`
 	Locality     string `xml:"Locale"`
@@ -34,19 +39,31 @@ type LocationType struct {
 	Longitude  string `xml:"Longitude"`
 }
 
-type EncounterDurationType struct {
-	Texto              string `xml:"Text"`
-	SecondsApproximate int    `xml:"SecondsApproximate"`
-}
-
-type Sighting struct {
+type SightingXML struct {
 	ID                string                `xml:"id,attr"`
 	UfoShapeRef       string                `xml:"ufo_shape_ref,attr"`
 	DateTimeEncounter DateTimeEncounterType `xml:"DateTimeEncounter"`
 	DateDocumented    DateDocumentedType    `xml:"DateDocumented"`
-	Location          LocationType          `xml:"Location"`
+	Location          LocationXMLType       `xml:"Location"`
 	EncounterDuration EncounterDurationType `xml:"EncounterDuration"`
 	Description       string                `xml:"Description"`
+}
+
+type LocationType struct {
+	Country             string
+	Region              string
+	Locality            string
+	LocationGeometry    *string
+}
+
+type Sighting struct {
+	ID                string
+	UfoShapeRef       string
+	DateTimeEncounter DateTimeEncounterType
+	DateDocumented    DateDocumentedType
+	Location          LocationType
+	EncounterDuration EncounterDurationType
+	Description       string
 }
 
 type UfoShape struct {
@@ -59,7 +76,7 @@ type UfoShapes struct {
 }
 
 type UfoData struct {
-	Sightings  []Sighting `xml:"Sightings>Sighting"`
+	Sightings  []SightingXML `xml:"Sightings>Sighting"`
 	UfoShapes  UfoShapes  `xml:"Ufo-shapes"`
 }
 
@@ -158,6 +175,8 @@ func sendEntityToRabbitMQ(ch *amqp.Channel, routingKey string, entityType string
 		return err
 	}
 
+	fmt.Println("Sent message of ",entityType,"to ",routingKey)
+
 	return nil
 }
 
@@ -241,11 +260,10 @@ func main() {
     sightingCounter := 0
     shapeCounter := 0
     fileCounter := 0
-    importedDocumentsTable := "imported_documents"
 	for range ticker.C {
         fmt.Println("ticker is ticking")
 		// Query for new entries
-		importDocumentsQuery := "SELECT id, file_name, xml, active, scanned, created_on FROM " + importedDocumentsTable
+		importDocumentsQuery := "SELECT id, file_name, xml, active, scanned, created_on FROM imported_documents"
 		rows, err := db.Query(importDocumentsQuery)
 		if err != nil {
 			fmt.Printf("Error querying database: %s\n", err)
@@ -283,12 +301,48 @@ func main() {
                         }
 
                         // Extract every Sighting from Sightings
-                        for _, sighting := range ufoData.Sightings {
-                            err := sendEntityToRabbitMQ(ch, entityImportRoutingKey, "sighting", sighting)
+                        for _, sightingXML := range ufoData.Sightings {
+
+                            latitude := sightingXML.Location.Latitude
+                            longitude := sightingXML.Location.Longitude
+
+                            var locationGeoData *string
+                            var pointString = ""
+
+                            if (latitude != "" && longitude != ""){
+                                pointString = "POINT("+longitude+" "+latitude+")"
+                                locationGeoData = &pointString
+                            }
+
+                            sightingGeoData := Sighting{
+                                ID: sightingXML.ID,
+                                UfoShapeRef: sightingXML.UfoShapeRef,
+                                DateTimeEncounter: sightingXML.DateTimeEncounter,
+                                DateDocumented: sightingXML.DateDocumented,
+                                Location: LocationType{
+                                    Country: sightingXML.Location.Country,
+                                    Region: sightingXML.Location.Region,
+                                    Locality: sightingXML.Location.Locality,
+                                    LocationGeometry: locationGeoData,
+                                },
+                                EncounterDuration: sightingXML.EncounterDuration,
+                                Description: sightingXML.Description,
+                            }
+
+                            err := sendEntityToRabbitMQ(ch, entityImportRoutingKey, "sighting", sightingGeoData)
                             if err != nil {
                                 log.Println(err)
                                 continue
                             }
+
+                            if(locationGeoData == nil){
+                                err := sendEntityToRabbitMQ(ch, geoDataUpdateRoutingKey, "sighting", sightingGeoData)
+                                if err != nil {
+                                    log.Println(err)
+                                    continue
+                                }
+                            }
+
                             sightingCounter += 1
                         }
 
@@ -302,7 +356,7 @@ func main() {
                             shapeCounter += 1
                         }
 
-                        updateScannedQuery := fmt.Sprintf("UPDATE %s SET scanned=true WHERE id=$1", importedDocumentsTable)
+                        updateScannedQuery := "UPDATE imported_documents SET scanned=true WHERE id=$1"
                         _, err = db.Exec(updateScannedQuery, id)
                         if err != nil {
                             log.Printf("Error: Could not update variable \"scanned\" on line with id \"%d\"", id)

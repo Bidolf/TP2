@@ -99,6 +99,7 @@ services:
         depends_on:
             - api-gis
             - api-entities
+            - broker
 
     # Container that runs the RPC server
     rpc-server:
