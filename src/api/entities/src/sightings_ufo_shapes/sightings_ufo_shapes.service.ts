@@ -1,5 +1,5 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { PrismaClient} from '@prisma/client';
+import { PrismaClient, Prisma} from '@prisma/client';
 @Injectable()
 export class Sightings_ufo_shapesService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   async onModuleInit() {
@@ -14,24 +14,27 @@ export class Sightings_ufo_shapesService extends PrismaClient implements OnModul
     if (message.type === 'sighting' && message.content) {
       const content = message.content;
       console.log('Creating sighting:', content);
-      const sighting = await this.prisma.sighting.create({
+      try {
+       const sighting = await this.prisma.sighting.create({
         data: {
           id: content.ID,
           ufo_shape_ref: content.UfoShapeRef,
-          date_encounter: "'" + content.DateTimeEncounter.Data + "'",
-          time_encounter: "'" + content.DateTimeEncounter.Tempo + "'",
+          date_encounter: content.DateTimeEncounter.Data,
+          time_encounter: content.DateTimeEncounter.Tempo,
           season_encounter: content.DateTimeEncounter.Season,
-          date_documented: "'" + content.DateDocumented.Data + "'",
+          date_documented: content.DateDocumented.Data,
           country: content.Location.Country,
           region: content.Location.Region,
           locale: content.Location.Locality,
-          location_geometry: "'" + content.Location.LocationGeometry + "'",
+          location_geometry: content.Location.LocationGeometry,
           encounter_duration_text: content.EncounterDuration.Texto,
           encounter_duration_seconds: content.EncounterDuration.SecondsApproximate,
           description: content.Description,
         },
       });
-      console.log(sighting)
+      } catch (error) {
+        console.error('Error creating Sighting:', error);
+      }
     }else if (message.type === 'ufo_shape' && message.content) {
       const content = message.content;
       const ufoShape = await this.prisma.ufo_shape.create({
