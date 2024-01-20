@@ -21,6 +21,9 @@ HOSTNAME = 'http://api-gis:' + API_PORT
 def update_entity(entity_json):
     entity_data = json.loads(entity_json)
 
+    print(entity_json)
+    print(entity_data)
+
     entity_country = entity_data["Location"]["Country"]
     entity_region = entity_data["Location"]["Region"]
     entity_locale = entity_data["Location"]["Locale"]
@@ -81,37 +84,73 @@ def send_patch(entity_data):
     print(f'Response from /api/tile: {response.status_code}, {response.json()}')
 
 
+def connect_with_retry(parameters, num_attempts, delay_seconds):
+    for i in range(num_attempts):
+        try:
+            connection = pika.BlockingConnection(parameters)
+            return connection
+        except pika.exceptions.AMQPConnectionError:
+            print("Connection to RabbitMQ failed. Retrying in ",delay_seconds," seconds...")
+            time.sleep(delay_seconds)
+    print("Connection to RabbitMQ failed. No longer retrying.")
+    return None
+
+def consume_messages(channel, routing_key, num_messages):
+    channel.basic_consume(queue=routing_key, on_message_callback=callback, auto_ack=True)
+
+    messages_received = 0
+    while messages_received < num_messages:
+        try:
+            channel.start_consuming()
+        except KeyboardInterrupt:
+            break
+        messages_received += 1
+
+
+def callback(channel, method, properties, body):
+    print("mesage!!! :D")
+    update_entity(body["content"])
+
+
+
 def main():
     credentials = pika.PlainCredentials(RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS)
-    connection = pika.BlockingConnection(
-        pika.ConnectionParameters(
+    parameters= pika.ConnectionParameters(
             host='rabbitmq',
             port='5672',
             virtual_host=RABBITMQ_DEFAULT_VHOST,
-            credentials=credentials))
+            credentials=credentials)
+
+    connection = connect_with_retry(parameters, 10, 5)
+
     channel = connection.channel()
 
-    channel.queue_declare(queue=ROUTING_KEY_GEO_DATA_UPDATE)
+    while True:
+        try:
+            method_frame = channel.queue_declare(queue=ROUTING_KEY_GEO_DATA_UPDATE)
+            print(method_frame)
+            print(str(method_frame))
+            message_count = method_frame.method.message_count
+            messages_to_receive = ENTITIES_PER_ITERATION
+            if(message_count < messages_to_receive):
+                messages_to_receive = message_count
 
-    print(f"Getting up to {ENTITIES_PER_ITERATION} entities without coordinates...")
+            print(f"Getting {messages_to_receive} entities without coordinates...")
 
-    for _ in range(ENTITIES_PER_ITERATION):
-        method_frame, header_frame, body = channel.basic_get(queue=ROUTING_KEY_GEO_DATA_UPDATE, auto_ack=True)
-        if method_frame:
-            entity_json = json.loads(body.decode('utf-8'))
-            # print("Received JSON data:", entity_json)
+            consume_messages(channel, ROUTING_KEY_GEO_DATA_UPDATE, messages_to_receive)
 
-        else:
-            print("No more messages in the queue.")
-            break
+            time.sleep(POLLING_FREQ)
+        except KeyboardInterrupt:
+            sys.exit(0)
 
-    time.sleep(POLLING_FREQ)
+
+
 
 
 if __name__ == "__main__":
-    try:
-        while True:
+    while True:
+        try:
             main()
-    except KeyboardInterrupt:
-        sys.exit(0)
+        except KeyboardInterrupt:
+            sys.exit(0)
 

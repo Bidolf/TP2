@@ -100,6 +100,7 @@ services:
             - api-gis
             - api-entities
             - broker
+            - watcher
 
     # Container that runs the RPC server
     rpc-server:

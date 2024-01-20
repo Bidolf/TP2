@@ -114,44 +114,6 @@ func dialWithRetry(url string) (*amqp.Connection, error) {
 	return conn, nil
 }
 
-func sendSightingToRabbitMQ(ch *amqp.Channel, sighting Sighting) error {
-	// Convert sighting to JSON or any preferred format
-	sightingJSON, err := json.Marshal(sighting)
-	if err != nil {
-		return err
-	}
-
-	// Publish message to RabbitMQ with a specific routing key for sightings
-	err = ch.Publish("", "sighting_routing_key", false, false, amqp.Publishing{
-		ContentType: "application/json",
-		Body:        sightingJSON,
-	})
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func sendUfoShapeToRabbitMQ(ch *amqp.Channel, ufoShape UfoShape) error {
-	// Convert ufoShape to JSON or any preferred format
-	ufoShapeJSON, err := json.Marshal(ufoShape)
-	if err != nil {
-		return err
-	}
-
-	// Publish message to RabbitMQ with a specific routing key for Ufo-shapes
-	err = ch.Publish("", "ufo_shape_routing_key", false, false, amqp.Publishing{
-		ContentType: "application/json",
-		Body:        ufoShapeJSON,
-	})
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func sendEntityToRabbitMQ(ch *amqp.Channel, routingKey string, entityType string, entityContent interface{}) error {
 
 	 entity := Entity{
@@ -164,7 +126,7 @@ func sendEntityToRabbitMQ(ch *amqp.Channel, routingKey string, entityType string
 		return err
 	}
 
-	fmt.Println(string(entityJSON))
+	// fmt.Println(string(entityJSON))
 
 	// Publish message to RabbitMQ
 	err = ch.Publish("", routingKey, false, false, amqp.Publishing{
@@ -183,7 +145,7 @@ func sendEntityToRabbitMQ(ch *amqp.Channel, routingKey string, entityType string
 func declareQueue(ch *amqp.Channel, queueName string){
     _, err := ch.QueueDeclare(
 		queueName, // Queue name
-		true,      // Durable
+		false,      // Durable
 		false,     // Delete when unused
 		false,     // Exclusive
 		false,     // No-wait
