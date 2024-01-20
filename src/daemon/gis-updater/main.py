@@ -125,12 +125,10 @@ def main():
 
     channel = connection.channel()
 
+    channel.queue_declare(queue=ROUTING_KEY_GEO_DATA_UPDATE, durable=True)
     while True:
         try:
-            method_frame = channel.queue_declare(queue=ROUTING_KEY_GEO_DATA_UPDATE)
-            print(method_frame)
-            print(str(method_frame))
-            message_count = method_frame.method.message_count
+            message_count = 20
             messages_to_receive = ENTITIES_PER_ITERATION
             if(message_count < messages_to_receive):
                 messages_to_receive = message_count
@@ -138,6 +136,7 @@ def main():
             print(f"Getting {messages_to_receive} entities without coordinates...")
 
             consume_messages(channel, ROUTING_KEY_GEO_DATA_UPDATE, messages_to_receive)
+            # TODO quando quiser buscar 20 msg mas só existem 10, fechr o consume_messages
 
             time.sleep(POLLING_FREQ)
         except KeyboardInterrupt:

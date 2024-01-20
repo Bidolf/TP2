@@ -88,9 +88,9 @@ class CSVtoXMLConverter:
             locale.text = alter_if_empty_value(row.get('Locale'), "N/A")
 
             latitude = ET.SubElement(location, "Latitude")
-            latitude.text = row.get('latitude')
+            latitude.text = alter_if_empty_value(row.get('latitude'), "N/A")
             longitude = ET.SubElement(location, "Longitude")
-            longitude.text = row.get('longitude')
+            longitude.text = alter_if_empty_value(row.get('longitude'), "N/A")
 
             encounter_duration = ET.SubElement(sighting, "EncounterDuration")
             text = ET.SubElement(encounter_duration, "Text")
