@@ -1,5 +1,5 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { PrismaClient, Prisma} from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 @Injectable()
 export class Sightings_ufo_shapesService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   async onModuleInit() {
@@ -26,12 +26,14 @@ export class Sightings_ufo_shapesService extends PrismaClient implements OnModul
           country: content.Location.Country,
           region: content.Location.Region,
           locale: content.Location.Locality,
-          location_geometry: content.Location.LocationGeometry,
+          latitude:content.Location.Latitude,
+          longitude:content.Location.Longitude,
           encounter_duration_text: content.EncounterDuration.Texto,
           encounter_duration_seconds: content.EncounterDuration.SecondsApproximate,
           description: content.Description,
         },
       });
+       console.log(sighting)
       } catch (error) {
         console.error('Error creating Sighting:', error);
       }

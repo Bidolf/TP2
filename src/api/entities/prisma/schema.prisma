@@ -3,8 +3,6 @@
 
 generator client {
   provider = "prisma-client-js"
-
-  previewFeatures = ["extendedIndexes", "improvedQueryRaw"]
 }
 
 datasource db {
@@ -24,12 +22,12 @@ model Sighting {
   country                 String?
   region                  String?
   locale                  String?
-  location_geometry       Unsupported("geometry(Point, 4326)")
+  latitude                String?
+  longitude               String?
   encounter_duration_text  String?
   encounter_duration_seconds Int?
   description             String?
   ufoShape                Ufo_shape   @relation(fields: [ufo_shape_ref], references: [id])
-
   @@map(name: "sightings")
 }
 

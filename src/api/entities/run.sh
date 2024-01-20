@@ -1,7 +1,6 @@
 #!/bin/bash
 
 npm install;
-npm install prisma;
 npx prisma generate;
 
 
