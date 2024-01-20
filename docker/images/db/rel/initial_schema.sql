@@ -4,14 +4,14 @@ CREATE EXTENSION IF NOT EXISTS POSTGIS_TOPOLOGY;
 CREATE TABLE public.sightings (
 	id VARCHAR(250)PRIMARY KEY,
 	ufo_shape_ref VARCHAR(250) NOT NULL,
-    date_encounter DATE,
-    time_encounter TIME,
+    date_encounter VARCHAR(250),
+    time_encounter VARCHAR(250),
     season_encounter VARCHAR(250),
-    date_documented DATE,
+    date_documented VARCHAR(250),
     country VARCHAR(250),
     region VARCHAR(250),
     locale VARCHAR(250),
-    location_geometry GEOMETRY(Point, 4326), /*4326 represents the SRID (Spatial Reference ID) for WGS 84, which is commonly used for GPS coordinates. so that we can know that point has longitude and latitude*/
+    location_geometry geometry(Point, 4326), /*4326 represents the SRID (Spatial Reference ID) for WGS 84, which is commonly used for GPS coordinates. so that we can know that point has longitude and latitude*/
     encounter_duration_text VARCHAR(250),
     encounter_duration_seconds INTEGER,
     description TEXT,

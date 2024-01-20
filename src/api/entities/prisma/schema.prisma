@@ -3,6 +3,8 @@
 
 generator client {
   provider = "prisma-client-js"
+
+  previewFeatures = ["extendedIndexes", "improvedQueryRaw"]
 }
 
 datasource db {
@@ -15,14 +17,14 @@ datasource db {
 model Sighting {
   id                      String      @id
   ufo_shape_ref           String
-  date_encounter          Unsupported("DATE")?
-  time_encounter          Unsupported("TIME")?
+  date_encounter          String?
+  time_encounter          String?
   season_encounter        String?
-  date_documented         Unsupported("DATE")?
+  date_documented         String?
   country                 String?
   region                  String?
   locale                  String?
-  location_geometry       Unsupported("GEOMETRY(Point, 4326)")?
+  location_geometry       Unsupported("geometry(Point, 4326)")
   encounter_duration_text  String?
   encounter_duration_seconds Int?
   description             String?
