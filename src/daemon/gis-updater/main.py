@@ -33,7 +33,10 @@ def update_entity(entity_json):
         entity_data["Location"]["Longitude"] = entity_long
     else:
         print("Error: Could not find coordinates")
-        return
+        # TODO se não houverem coordenadas, devolver como NULL
+        entity_data["Location"]["Latitude"] = "NULL"
+        entity_data["Location"]["Longitude"] = "NULL"
+
 
     send_patch(entity_data)
 

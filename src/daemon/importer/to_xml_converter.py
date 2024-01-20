@@ -4,6 +4,13 @@ from lxml import etree as ET
 from reader import CSVReader
 import uuid
 
+
+def alter_if_empty_value(string, default):
+    if string != "":
+        return string
+    else:
+        return default
+
 class CSVtoXMLConverter:
 
     def __init__(self, csv_path, xsd_path):
@@ -47,13 +54,14 @@ class CSVtoXMLConverter:
         namespace_uuid = uuid.NAMESPACE_DNS
         count = 0
         for row in csv:
-            if row.get('UFO_shape') not in ufo_shapes_dict:
-                ufo_shape_id = str(uuid.uuid5(namespace_uuid, row.get('UFO_shape')))
+            parsed_ufo_shape = alter_if_empty_value(row.get('UFO_shape'), "Unknown")
+            if parsed_ufo_shape not in ufo_shapes_dict:
+                ufo_shape_id = str(uuid.uuid5(namespace_uuid, parsed_ufo_shape))
                 ufo_shape = ET.SubElement(ufo_shapes, 'Ufo-shape', id=ufo_shape_id)
-                ufo_shape.text = row.get('UFO_shape')
-                ufo_shapes_dict[row.get('UFO_shape')] = ufo_shape_id
+                ufo_shape.text = parsed_ufo_shape
+                ufo_shapes_dict[parsed_ufo_shape] = ufo_shape_id
             else:
-                ufo_shape_id = ufo_shapes_dict[row.get('UFO_shape')]
+                ufo_shape_id = ufo_shapes_dict[parsed_ufo_shape]
             count += 1
             sighting_id = str(uuid.uuid5(namespace_uuid, str(count)))
             sighting = ET.SubElement(sightings, "Sighting", id=sighting_id, ufo_shape_ref=ufo_shape_id)
@@ -73,11 +81,12 @@ class CSVtoXMLConverter:
 
             location = ET.SubElement(sighting, "Location")
             country = ET.SubElement(location, "Country")
-            country.text = row.get('Country')
+            country.text = alter_if_empty_value(row.get('Country'), "N/A")
             region = ET.SubElement(location, "Region")
-            region.text = row.get('Region')
+            region.text = alter_if_empty_value(row.get('Region'), "N/A")
             locale = ET.SubElement(location, "Locale")
-            locale.text = row.get('Locale')
+            locale.text = alter_if_empty_value(row.get('Locale'), "N/A")
+
             latitude = ET.SubElement(location, "Latitude")
             latitude.text = row.get('latitude')
             longitude = ET.SubElement(location, "Longitude")
@@ -85,11 +94,13 @@ class CSVtoXMLConverter:
 
             encounter_duration = ET.SubElement(sighting, "EncounterDuration")
             text = ET.SubElement(encounter_duration, "Text")
-            text.text = row.get('Encounter_Duration')
+            text.text = alter_if_empty_value(row.get('Encounter_Duration'), "N/A")
             seconds_approximate = ET.SubElement(encounter_duration, "SecondsApproximate")
             seconds_approximate.text = str(int(float(row.get('length_of_encounter_seconds'))))
 
             description = ET.SubElement(sighting, "Description")
-            description.text = row.get('Description')
+            description.text = alter_if_empty_value(row.get('Description'), "N/A")
 
         return ET.ElementTree(root)
+
+

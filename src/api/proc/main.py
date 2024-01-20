@@ -9,10 +9,12 @@ RPC_SERVER_URL = 'http://rpc-server:9000'
 app = Flask(__name__)
 app.config["DEBUG"] = True
 
+# server.register_function(test_connection)
 # server.register_function(db_delete)
-# server.register_function(db_addfiles)
+    # server.register_function(db_addfiles)
 # server.register_function(visualize_table)
 # server.register_function(db_available_files_delete)
+    # server.register_function(db_available_files_add)
 # server.register_function(retrieve_year_region)
 # server.register_function(retrieve_xml)
 # server.register_function(retrieve_shape_region)
