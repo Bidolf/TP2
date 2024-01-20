@@ -68,12 +68,39 @@ export class SightingsUfoShapesController {
   }
   @Get('ufo_shapes')
   async getAllShapes() {
-    const shapes = await this.service.getAllShapes();
-    return { shapes };
+    try{
+      const shapes = await this.service.getAllShapes();
+      return { shapes };
+    } catch (error) {
+      console.error(error);
+    }
   }
   @Get('sightings')
   async getAllSightings() {
-    const sightings = await this.service.getAllSightings();
-    return { sightings };
+    try{
+      const sightings = await this.service.getAllSightings();
+      return { sightings };
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  @Get('SightingbyUfoShape/:ufoShapeId')
+  async getSightingsByUfoShape(@Param('ufoShapeId') ufoShapeId: string) {
+    try {
+      const sighting = await this.service.getSightingsByUfoShape(ufoShapeId);
+      return sighting;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  @Get('ufoShapeBySighting/:sightingId')
+  async getUfoShapeBySighting(@Param('sightingId') sightingId: string) {
+    try {
+      const ufo_shape = await this.service.getUfoShapeBySightingId(sightingId);
+      return ufo_shape;
+    } catch (error) {
+      console.error(error);
+    }
   }
 }
