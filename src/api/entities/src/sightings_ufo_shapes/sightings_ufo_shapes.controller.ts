@@ -1,4 +1,4 @@
-import {Controller, Post,Get, Body, Param} from '@nestjs/common';
+import {Controller, Post,Get, Put, Delete,  Body, Param} from '@nestjs/common';
 import { Sightings_ufo_shapesService } from './sightings_ufo_shapes.service';
 @Controller('api/sightings_ufo_shapes')
 export class SightingsUfoShapesController {
@@ -6,30 +6,74 @@ export class SightingsUfoShapesController {
   @Post()
   async createSightingOrUfoShape(@Body() message: any) {
     try {
-      const result = await this.service.createSightingOrUfoShape(message);
-      return {result};
+      await this.service.createSightingOrUfoShape(message);
+      return {message: 'Entity created successfully'};
     } catch (error) {
       console.error(error);
     }
   }
-  @Get('sightings')
-  async getAllSightings() {
-    const sightings = await this.service.getAllSightings();
-    return { sightings };
+  @Put('sightings/:id')
+  async updateSighting(@Param('id') id: string, @Body() updatedSightingData: any) {
+    try {
+      await this.service.updateSighting(id, updatedSightingData);
+      return { message: 'Sighting updated successfully' };
+    } catch (error) {
+      console.error(error);
+    }
   }
-
+  @Delete('sightings/:id')
+  async deleteSighting(@Param('id') id: string) {
+    try {
+      await this.service.deleteSighting(id);
+      return { message: 'Sighting deleted successfully' };
+    } catch (error) {
+      console.error(error);
+    }
+  }
   @Get('sightings/:id')
   async getSightingById(@Param('id') id: string) {
     try {
       const sighting = await this.service.getSightingById(id);
       return sighting;
     } catch (error) {
-      console.error('Error retrieving sighting by ID:', error);
+      console.error(error);
+    }
+  }
+  @Get('ufo_shapes/:id')
+  async getUfoShapeById(@Param('id') id: string) {
+    try {
+      const ufoShape = await this.service.getUfoShapeById(id);
+      return ufoShape;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  @Put('ufo_shapes/:id')
+  async updateUfoShape(@Param('id') id: string, @Body() updatedUfoShapeData: any) {
+    try {
+      await this.service.updateUfoShape(id, updatedUfoShapeData);
+      return { message: 'Ufo_shape updated successfully' };
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  @Delete('ufo_shapes/:id')
+  async deleteUfoShape(@Param('id') id: string) {
+    try {
+      await this.service.deleteUfoShape(id);
+      return { message: 'Ufo shape deleted successfully' };
+    } catch (error) {
+      console.error(error);
     }
   }
   @Get('ufo_shapes')
   async getAllShapes() {
     const shapes = await this.service.getAllShapes();
     return { shapes };
+  }
+  @Get('sightings')
+  async getAllSightings() {
+    const sightings = await this.service.getAllSightings();
+    return { sightings };
   }
 }

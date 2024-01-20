@@ -15,17 +15,18 @@ datasource db {
 model Sighting {
   id                      String      @id
   ufo_shape_ref           String
-  date_encounter          String?
-  time_encounter          String?
+  date_encounter          Unsupported("DATE")?
+  time_encounter          Unsupported("TIME")?
   season_encounter        String?
-  date_documented         String?
+  date_documented         Unsupported("DATE")?
   country                 String?
   region                  String?
   locale                  String?
-  location_geometry       String?
+  location_geometry       Unsupported("GEOMETRY(Point, 4326)")?
   encounter_duration_text  String?
   encounter_duration_seconds Int?
   description             String?
+  ufoShape                Ufo_shape   @relation(fields: [ufo_shape_ref], references: [id])
 
   @@map(name: "sightings")
 }
@@ -33,6 +34,6 @@ model Sighting {
 model Ufo_shape {
   id         String     @id
   shape_name String?
-
+  sightings  Sighting[]
   @@map(name: "ufo_shapes")
 }
