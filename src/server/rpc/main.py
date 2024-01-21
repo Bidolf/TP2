@@ -3,7 +3,6 @@ from xmlrpc.server import SimpleXMLRPCServer
 from xmlrpc.server import SimpleXMLRPCRequestHandler
 from db_functions.db_deletefiles import db_available_files_delete, db_delete
 from db_functions.db_addfiles import db_available_files_add, db_addfiles
-from db_functions.visualize_table import visualize_table
 from functions.test_connection import test_connection
 from functions.retrieve_year_region import retrieve_year_region
 from db_functions.retrieve_xml import retrieve_xml
@@ -27,7 +26,6 @@ if __name__ == "__main__":
         server.register_function(test_connection)
         server.register_function(db_delete)
         server.register_function(db_addfiles)
-        server.register_function(visualize_table)
         server.register_function(db_available_files_delete)
         server.register_function(db_available_files_add)
         server.register_function(retrieve_year_region)

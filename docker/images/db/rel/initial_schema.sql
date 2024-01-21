@@ -13,7 +13,7 @@ CREATE TABLE public.sightings (
     locale VARCHAR(250),
     latitude VARCHAR(250),
     longitude VARCHAR(250),
-    location_geometry geometry(Point, 4326), /*4326 represents the SRID (Spatial Reference ID) for WGS 84, which is commonly used for GPS coordinates. so that we can know that point has longitude and latitude*/
+    location_geometry geometry(Point, 4326) DEFAULT NULL, /*4326 represents the SRID (Spatial Reference ID) for WGS 84, which is commonly used for GPS coordinates. so that we can know that point has longitude and latitude*/
     encounter_duration_text VARCHAR(250),
     encounter_duration_seconds INTEGER,
     description TEXT,

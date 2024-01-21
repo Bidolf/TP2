@@ -1,67 +1,60 @@
 import sys
-import xmlrpc.client
+import rpc_client
 
-from flask import Flask, jsonify
+from flask import Flask
 
-PORT = int(sys.argv[1]) if len(sys.argv) >= 2 else 9000
-RPC_SERVER_URL = 'http://rpc-server:9000'
+PORT = int(sys.argv[1]) if len(sys.argv) >= 2 else 8080
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
 
-# server.register_function(test_connection)
-# server.register_function(db_delete)
-    # server.register_function(db_addfiles)
-# server.register_function(visualize_table)
-# server.register_function(db_available_files_delete)
-    # server.register_function(db_available_files_add)
-# server.register_function(retrieve_year_region)
-# server.register_function(retrieve_xml)
-# server.register_function(retrieve_shape_region)
-# server.register_function(retrieve_xml_group_by_file)
-# server.register_function(retrieve_shape_month)
-# server.register_function(get_number_sightings_in_year)
-# server.register_function(get_number_sightings_group_by_year)
 
-def call_rpc_method(method_name, *args):
-    try:
-        with xmlrpc.client.ServerProxy(RPC_SERVER_URL) as proxy:
-            method = getattr(proxy, method_name)
-            result = method(*args)
-            return result
-    except Exception as e:
-        return e
-
-@app.route('/api/db/available_files_add', methods=['GET'])
-def db_available_files_add():
-    try:
-        result = call_rpc_method('db_available_files_add')
-        return jsonify({'result': result})
-    except Exception as e:
-        app.logger.error("An error occurred: %s",str(e), exc_info=True)
-        return jsonify({'error': 'An error occurred', 'details':str(e)}), 500
-@app.route('/api/db/add_files', methods=['POST'])
-def db_add_files():
-    try:
-        input_string = request.json.get('input_string')
-        result = call_rpc_method('db_add_file')
-        return jsonify({'result': result})
-    except Exception as e:
-        app.logger.error("An error occurred: %s",str(e), exc_info=True)
-        return jsonify({'error': 'An error occurred', 'details':str(e)}), 500
+@app.route('/test_conn', methods=['GET'])
+def test_conn():
+    result = rpc_client.test_connection()
+    return result
 
 
+@app.route('/add_file/<file_name>', methods=['PATCH'])
+def add_file(file_name):
+    result = rpc_client.add_file(file_name)
+    return result
 
-@app.route('/api/best_players', methods=['GET'])
-def get_best_players():
-    return [{
-        "id": "7674fe6a-6c8d-47b3-9a1f-18637771e23b",
-        "name": "Ronaldo",
-        "country": "Portugal",
-        "position": "Striker",
-        "imgUrl": "https://cdn-icons-png.flaticon.com/512/805/805401.png",
-        "number": 7
-    }]
+
+@app.route('/delete_file/<file_name>', methods=['PATCH'])
+def delete_file(file_name):
+    result = rpc_client.delete_file(file_name)
+    return result
+
+
+@app.route('/get_number_sightings_in_year/<year>', methods=['GET'])
+def get_number_sightings_in_year(year):
+    result = rpc_client.get_number_sightings_in_year(year, 1)
+    return result
+
+
+@app.route('/get_number_sightings_group_by_year', methods=['GET'])
+def get_number_sightings_group_by_year():
+    result = rpc_client.get_number_sightings_group_by_year()
+    return result
+
+
+@app.route('/retrieve_shape_month/<shape>/<month>', methods=['GET'])
+def retrieve_shape_month(shape, month):
+    result = rpc_client.retrieve_shape_month(shape, month)
+    return result
+
+
+@app.route('/retrieve_year_region/<region>/<year>', methods=['GET'])
+def retrieve_year_region(region, year):
+    result = rpc_client.retrieve_year_region(region, year)
+    return result
+
+
+@app.route('/retrieve_shape_region/<shape>', methods=['GET'])
+def retrieve_shape_region(shape):
+    result = rpc_client.retrieve_shape_region(shape)
+    return result
 
 
 if __name__ == '__main__':

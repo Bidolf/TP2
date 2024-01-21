@@ -1,4 +1,4 @@
-import {Controller, Post,Get, Put, Delete,  Body, Param} from '@nestjs/common';
+import {Controller, Post,Get, Put, Delete,  Body, Param, Patch} from '@nestjs/common';
 import { Sightings_ufo_shapesService } from './sightings_ufo_shapes.service';
 @Controller('api/sightings_ufo_shapes')
 export class SightingsUfoShapesController {
@@ -10,15 +10,17 @@ export class SightingsUfoShapesController {
       return {message: 'Entity created successfully'};
     } catch (error) {
       console.error(error);
+      return { error: 'Failed to create Entity' };
     }
   }
-  @Put('sightings/:id')
+  @Patch('sightings/:id')
   async updateSighting(@Param('id') id: string, @Body() updatedSightingData: any) {
     try {
       await this.service.updateSighting(id, updatedSightingData);
       return { message: 'Sighting updated successfully' };
     } catch (error) {
       console.error(error);
+      return { error: 'Failed to update sighting' };
     }
   }
   @Delete('sightings/:id')
@@ -28,6 +30,7 @@ export class SightingsUfoShapesController {
       return { message: 'Sighting deleted successfully' };
     } catch (error) {
       console.error(error);
+      return { error: 'Failed to delete sighting' };
     }
   }
   @Get('sightings/:id')
@@ -37,6 +40,7 @@ export class SightingsUfoShapesController {
       return sighting;
     } catch (error) {
       console.error(error);
+      return { error: 'Failed to retrieve sighting' };
     }
   }
   @Get('ufo_shapes/:id')
@@ -46,15 +50,17 @@ export class SightingsUfoShapesController {
       return ufoShape;
     } catch (error) {
       console.error(error);
+       return { error: 'Failed to retrieve ufo shape' };
     }
   }
-  @Put('ufo_shapes/:id')
+  @Patch('ufo_shapes/:id')
   async updateUfoShape(@Param('id') id: string, @Body() updatedUfoShapeData: any) {
     try {
       await this.service.updateUfoShape(id, updatedUfoShapeData);
-      return { message: 'Ufo_shape updated successfully' };
+      return { message: 'Ufo shape updated successfully' };
     } catch (error) {
       console.error(error);
+       return { error: 'Failed to update ufo shape' };
     }
   }
   @Delete('ufo_shapes/:id')
@@ -64,6 +70,7 @@ export class SightingsUfoShapesController {
       return { message: 'Ufo shape deleted successfully' };
     } catch (error) {
       console.error(error);
+      return { error: 'Failed to delete ufo shape' };
     }
   }
   @Get('ufo_shapes')
@@ -73,6 +80,7 @@ export class SightingsUfoShapesController {
       return { shapes };
     } catch (error) {
       console.error(error);
+      return { error: 'Failed to retrieve all ufo shapes' };
     }
   }
   @Get('sightings')
@@ -82,6 +90,7 @@ export class SightingsUfoShapesController {
       return { sightings };
     } catch (error) {
       console.error(error);
+      return { error: 'Failed to retrieve all sightings' };
     }
   }
   @Get('SightingbyUfoShape/:ufoShapeId')
@@ -91,6 +100,7 @@ export class SightingsUfoShapesController {
       return sighting;
     } catch (error) {
       console.error(error);
+      return { error: 'Failed to retrieve sighting' };
     }
   }
 
@@ -101,6 +111,7 @@ export class SightingsUfoShapesController {
       return ufo_shape;
     } catch (error) {
       console.error(error);
+      return { error: 'Failed to retrieve ufo shape' };
     }
   }
 }

@@ -13,7 +13,6 @@ export class Sightings_ufo_shapesService extends PrismaClient implements OnModul
   async createSightingOrUfoShape(message: any) {
     if (message.type === 'sighting' && message.content) {
       const content = message.content;
-      console.log('Creating sighting:', content);
       try {
        const sighting = await this.prisma.sighting.create({
         data: {
