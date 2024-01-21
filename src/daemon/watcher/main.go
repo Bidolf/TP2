@@ -369,7 +369,7 @@ func main() {
 				}
 				count += 1
 			}
-			fmt.Println("Sent ", count, " messages of ufo_shapes to ", entityImportRoutingKey)
+			fmt.Println("Sent ", count, " messages of ufo_shapes to ", geoDataUpdateRoutingKey)
 
 			fmt.Printf("Total Files: %d; Sightings: %d; Shapes: %d", fileCounter, sightingCounter, shapeCounter)
 		} else {
