@@ -20,28 +20,22 @@ HOSTNAME = 'http://api-gis:' + API_PORT
 
 def update_entity(entity_json):
     entity_data = json.loads(entity_json)
-
-    print(entity_json)
-    print(entity_data)
-
-    entity_country = entity_data["Location"]["Country"]
-    entity_region = entity_data["Location"]["Region"]
-    entity_locale = entity_data["Location"]["Locale"]
+    entity = entity_data["content"]
+    print(entity)
+    entity_country = entity["Location"]["Country"]
+    entity_region = entity["Location"]["Region"]
+    entity_locale = entity["Location"]["Locality"]
 
     coordinates = get_coordinates(entity_country, entity_region, entity_locale)
 
     if coordinates:
         entity_lat, entity_long = coordinates
-        entity_data["Location"]["Latitude"] = entity_lat
-        entity_data["Location"]["Longitude"] = entity_long
+        entity["Location"]["Latitude"] = entity_lat
+        entity["Location"]["Longitude"] = entity_long
+        send_patch(entity)
     else:
         print("Error: Could not find coordinates")
-        # TODO se não houverem coordenadas, devolver como NULL
-        entity_data["Location"]["Latitude"] = "NULL"
-        entity_data["Location"]["Longitude"] = "NULL"
 
-
-    send_patch(entity_data)
 
 
 def get_coordinates(country, region, locale):
@@ -79,15 +73,17 @@ def get_coordinates(country, region, locale):
     return None
 
 
-def send_patch(entity_data):
-    response = requests.patch(f'{HOSTNAME}/api/entity/{entity_data["ID"]}')
-    print(f'Response from /api/tile: {response.status_code}, {response.json()}')
+def send_patch(entity):
+    print("sending patch - not really tho")
+    # response = requests.patch(f'{HOSTNAME}/api/entity/{entity["ID"]}')
+    # print(f'Response from /api/tile: {response.status_code}, {response.json()}')
 
 
 def connect_with_retry(parameters, num_attempts, delay_seconds):
     for i in range(num_attempts):
         try:
             connection = pika.BlockingConnection(parameters)
+            print("Connected to RabbitMQ.")
             return connection
         except pika.exceptions.AMQPConnectionError:
             print("Connection to RabbitMQ failed. Retrying in ",delay_seconds," seconds...")
@@ -96,20 +92,31 @@ def connect_with_retry(parameters, num_attempts, delay_seconds):
     return None
 
 def consume_messages(channel, routing_key, num_messages):
-    channel.basic_consume(queue=routing_key, on_message_callback=callback, auto_ack=True)
-
+    # channel.consume(queue=routing_key, on_message_callback=callback, auto_ack=True)
+    #
+    # messages_received = 0
+    # while messages_received < num_messages:
+    #     try:
+    #         channel.start_consuming()
+    #     except KeyboardInterrupt:
+    #         break
+    #     messages_received += 1
+    # channel.stop_consuming()
     messages_received = 0
-    while messages_received < num_messages:
-        try:
-            channel.start_consuming()
-        except KeyboardInterrupt:
-            break
+    for method, properties, body in channel.consume(queue=routing_key, auto_ack=True, inactivity_timeout=1):
+        print(method, properties, body)
+        callback(channel, method, properties, body)
         messages_received += 1
+        if messages_received == num_messages:
+            break
+
+    channel.stop_consuming()
+    return messages_received
 
 
 def callback(channel, method, properties, body):
     print("mesage!!! :D")
-    update_entity(body["content"])
+    update_entity(body.decode('utf-8'))
 
 
 
@@ -128,16 +135,21 @@ def main():
     channel.queue_declare(queue=ROUTING_KEY_GEO_DATA_UPDATE, durable=True)
     while True:
         try:
-            message_count = 20
             messages_to_receive = ENTITIES_PER_ITERATION
-            if(message_count < messages_to_receive):
-                messages_to_receive = message_count
 
-            print(f"Getting {messages_to_receive} entities without coordinates...")
+            print(f"Getting up to {messages_to_receive} entities without coordinates...")
+            messages_received = 0
+            for method, properties, body in channel.consume(queue=ROUTING_KEY_GEO_DATA_UPDATE, auto_ack=True, inactivity_timeout=1):
+                if(body != None):
+                    callback(channel, method, properties, body)
+                    messages_received += 1
+                    if messages_received == messages_to_receive :
+                        break
+                else:
+                    break
 
-            consume_messages(channel, ROUTING_KEY_GEO_DATA_UPDATE, messages_to_receive)
-            # TODO quando quiser buscar 20 msg mas só existem 10, fechr o consume_messages
-
+            # messages_received = consume_messages(channel, ROUTING_KEY_GEO_DATA_UPDATE, messages_to_receive)
+            print(f"Received {messages_received} messages.")
             time.sleep(POLLING_FREQ)
         except KeyboardInterrupt:
             sys.exit(0)
