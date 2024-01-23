@@ -1,6 +1,7 @@
 import json
 import sys
 import time
+import threading
 import pika
 import daemon
 import requests
@@ -15,27 +16,28 @@ RABBITMQ_DEFAULT_USER = sys.argv[5] if len(sys.argv) >= 6 else "is"
 RABBITMQ_DEFAULT_PASS = sys.argv[6] if len(sys.argv) >= 7 else "is"
 
 API_PORT = sys.argv[7] if len(sys.argv) >= 8 else "8080"
-HOSTNAME = 'http://api-gis:' + API_PORT
+HOSTNAME = 'http://api-gis:'+API_PORT
 
 
 def update_entity(entity_json):
     entity_data = json.loads(entity_json)
     entity = entity_data["content"]
-    print(entity)
+    # print(entity)
     entity_country = entity["Location"]["Country"]
     entity_region = entity["Location"]["Region"]
     entity_locale = entity["Location"]["Locality"]
 
     coordinates = get_coordinates(entity_country, entity_region, entity_locale)
-
+    # print(coordinates)
     if coordinates:
         entity_lat, entity_long = coordinates
-        entity["Location"]["Latitude"] = entity_lat
-        entity["Location"]["Longitude"] = entity_long
-        send_patch(entity)
+        # entity["Location"]["Latitude"] = entity_lat
+        # entity["Location"]["Longitude"] = entity_long
+        # entity_point = 'POINT('+entity_long+' '+entity_lat+')'
+        # print(entity)
+        send_patch(entity["ID"], entity_lat, entity_long)
     else:
         print("Error: Could not find coordinates")
-
 
 
 def get_coordinates(country, region, locale):
@@ -73,8 +75,17 @@ def get_coordinates(country, region, locale):
     return None
 
 
-def send_patch(entity):
-    print("sending patch - not really tho")
+def send_patch(id, latitude, longitude):
+    url = HOSTNAME + "/api/entity/" + id
+    data = {
+        'id': id,
+        'latitude': latitude,
+        'longitude': longitude
+    }
+    payload = json.dumps(data)
+    response = requests.patch(url,
+        data = payload)
+    print("Sent patch. Response: ", response.status_code)
     # response = requests.patch(f'{HOSTNAME}/api/entity/{entity["ID"]}')
     # print(f'Response from /api/tile: {response.status_code}, {response.json()}')
 
@@ -86,47 +97,38 @@ def connect_with_retry(parameters, num_attempts, delay_seconds):
             print("Connected to RabbitMQ.")
             return connection
         except pika.exceptions.AMQPConnectionError:
-            print("Connection to RabbitMQ failed. Retrying in ",delay_seconds," seconds...")
+            print("Connection to RabbitMQ failed. Retrying in ", delay_seconds, " seconds...")
             time.sleep(delay_seconds)
     print("Connection to RabbitMQ failed. No longer retrying.")
     return None
 
+
 def consume_messages(channel, routing_key, num_messages):
-    # channel.consume(queue=routing_key, on_message_callback=callback, auto_ack=True)
-    #
-    # messages_received = 0
-    # while messages_received < num_messages:
-    #     try:
-    #         channel.start_consuming()
-    #     except KeyboardInterrupt:
-    #         break
-    #     messages_received += 1
-    # channel.stop_consuming()
     messages_received = 0
-    for method, properties, body in channel.consume(queue=routing_key, auto_ack=True, inactivity_timeout=1):
-        print(method, properties, body)
-        callback(channel, method, properties, body)
-        messages_received += 1
-        if messages_received == num_messages:
+    for method, properties, body in channel.consume(queue=routing_key, auto_ack=False, inactivity_timeout=1):
+        if (body != None):
+            channel.basic_ack(method.delivery_tag)
+            callback(channel, method, properties, body)
+            messages_received += 1
+            if messages_received == num_messages:
+                break
+        else:
             break
 
-    channel.stop_consuming()
-    return messages_received
+    print(f"Updated {messages_received} sightings.")
 
 
 def callback(channel, method, properties, body):
-    print("mesage!!! :D")
     update_entity(body.decode('utf-8'))
-
 
 
 def main():
     credentials = pika.PlainCredentials(RABBITMQ_DEFAULT_USER, RABBITMQ_DEFAULT_PASS)
-    parameters= pika.ConnectionParameters(
-            host='rabbitmq',
-            port='5672',
-            virtual_host=RABBITMQ_DEFAULT_VHOST,
-            credentials=credentials)
+    parameters = pika.ConnectionParameters(
+        host='rabbitmq',
+        port='5672',
+        virtual_host=RABBITMQ_DEFAULT_VHOST,
+        credentials=credentials)
 
     connection = connect_with_retry(parameters, 10, 5)
 
@@ -137,25 +139,18 @@ def main():
         try:
             messages_to_receive = ENTITIES_PER_ITERATION
 
-            print(f"Getting up to {messages_to_receive} entities without coordinates...")
-            messages_received = 0
-            for method, properties, body in channel.consume(queue=ROUTING_KEY_GEO_DATA_UPDATE, auto_ack=True, inactivity_timeout=1):
-                if(body != None):
-                    callback(channel, method, properties, body)
-                    messages_received += 1
-                    if messages_received == messages_to_receive :
-                        break
-                else:
-                    break
+            print(f"Getting up to {messages_to_receive} sightings without coordinates...")
+            thread = threading.Thread(
+                target=consume_messages,
+                args=(channel, ROUTING_KEY_GEO_DATA_UPDATE, messages_to_receive)
+            )
 
-            # messages_received = consume_messages(channel, ROUTING_KEY_GEO_DATA_UPDATE, messages_to_receive)
-            print(f"Received {messages_received} messages.")
+            # Start the thread
+            thread.start()
+
             time.sleep(POLLING_FREQ)
         except KeyboardInterrupt:
             sys.exit(0)
-
-
-
 
 
 if __name__ == "__main__":
@@ -164,4 +159,3 @@ if __name__ == "__main__":
             main()
         except KeyboardInterrupt:
             sys.exit(0)
-

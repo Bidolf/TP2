@@ -101,8 +101,8 @@ func handleDelivery(delivery amqp.Delivery, count int) bool {
 		fmt.Println("Error migrating data:", err)
 		return false
 	}
-	fmt.Printf("Sleeping for %v seconds before processing the next message.\n", pollingFrequency)
-	time.Sleep(time.Duration(pollingFrequency) * time.Second)
+// 	fmt.Printf("Sleeping for %v seconds before processing the next message.\n", pollingFrequency)
+// 	time.Sleep(time.Duration(pollingFrequency) * time.Second)
 	fmt.Println("Message processing complete.")
 	fmt.Printf("Message processing complete. Number of entities migrated: %d\n", count)
 	return true
