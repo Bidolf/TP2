@@ -20,10 +20,10 @@ def retrieve_xml():
         results_xml = cursor.fetchall()
         for result in results_xml:
             xml.append(result[0])
-        print(f"XML was obtained successfully ", flush=True)
+        print(f"XML was obtained successfully ")
 
     except (Exception, psycopg2.Error) as error:
-        print("Failed to retrieve schema", error, flush=True)
+        print("Failed to retrieve schema", error)
 
     finally:
         if connection:

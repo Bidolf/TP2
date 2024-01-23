@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Ufo><Sightings><Sighting id="b04965e6-a9bb-591f-8f8a-1adcb2c8dc39" ufo_shape_ref="83b14e7c-9700-5398-a978-94eed6e96e2c">
+			<DateTimeEncounter>
+				<Date>1949-10-10</Date>
+				<Time>20:30:00</Time>
+				<Season>Autumn</Season>
+			</DateTimeEncounter>
+			<DateDocumented>2004-04-27</DateDocumented>
+			<Location>
+				<Country>United States</Country>
+				<Region>Texas</Region>
+				<Locale>San Marcos</Locale>
+				<Latitude>29.8830556</Latitude>
+				<Longitude>-97.9411111</Longitude>
+			</Location>
+			<EncounterDuration>
+				<Text>45 minutes</Text>
+				<SecondsApproximate>2700</SecondsApproximate>
+			</EncounterDuration>
+			<Description>This event took place in early fall around 1949-50. It occurred after a Boy Scout meeting in the Baptist Church. The Baptist Church sit</Description>
+		</Sighting>
+		<Sighting id="4b166dbe-d99d-5091-abdd-95b83330ed3a" ufo_shape_ref="35d4f7fe-6a47-59ea-b221-c07458eefa9f">
+			<DateTimeEncounter>
+				<Date>1949-10-10</Date>
+				<Time>21:00:00</Time>
+				<Season>Autumn</Season>
+			</DateTimeEncounter>
+			<DateDocumented>2005-12-16</DateDocumented>
+			<Location>
+				<Country>United States</Country>
+				<Region>Texas</Region>
+				<Locale>Bexar County</Locale>
+				<Latitude>29.38421</Latitude>
+				<Longitude>-98.581082</Longitude>
+			</Location>
+			<EncounterDuration>
+				<Text>1-2 hrs</Text>
+				<SecondsApproximate>7200</SecondsApproximate>
+			</EncounterDuration>
+			<Description>1949 Lackland AFB&amp;#44 TX.  Lights racing across the sky &amp;amp; making 90 degree turns on a dime.</Description>
+		</Sighting>
+		</Sightings><Ufo-shapes/></Ufo>

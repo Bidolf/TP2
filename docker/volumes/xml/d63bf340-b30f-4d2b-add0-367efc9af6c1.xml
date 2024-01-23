@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Ufo><Sightings><Sighting id="db680066-c83d-5ed7-89a4-1d79466ea62d" ufo_shape_ref="f242894e-9b1a-5faa-9bb4-9be9fa449a4f">
+			<DateTimeEncounter>
+				<Date>1972-10-10</Date>
+				<Time>22:30:00</Time>
+				<Season>Autumn</Season>
+			</DateTimeEncounter>
+			<DateDocumented>2007-08-14</DateDocumented>
+			<Location>
+				<Country>United States</Country>
+				<Region>Michigan</Region>
+				<Locale>Bloomfield</Locale>
+				<Latitude>42.5377778</Latitude>
+				<Longitude>-83.2330556</Longitude>
+			</Location>
+			<EncounterDuration>
+				<Text>2 minutes</Text>
+				<SecondsApproximate>120</SecondsApproximate>
+			</EncounterDuration>
+			<Description>The UFO was so close&amp;#44 my battery in the car went to zero amps&amp;#44 stalling the engine&amp;#44 turning off my lights and radio.</Description>
+		</Sighting>
+		<Sighting id="cadb7952-2bba-5609-88d4-8e47ec4e7920" ufo_shape_ref="f242894e-9b1a-5faa-9bb4-9be9fa449a4f">
+			<DateTimeEncounter>
+				<Date>1973-10-10</Date>
+				<Time>19:00:00</Time>
+				<Season>Autumn</Season>
+			</DateTimeEncounter>
+			<DateDocumented>2003-09-24</DateDocumented>
+			<Location>
+				<Country>United States</Country>
+				<Region>Connecticut</Region>
+				<Locale>Niantic</Locale>
+				<Latitude>41.3252778</Latitude>
+				<Longitude>-72.1936111</Longitude>
+			</Location>
+			<EncounterDuration>
+				<Text>20-30 min</Text>
+				<SecondsApproximate>1800</SecondsApproximate>
+			</EncounterDuration>
+			<Description>Oh&amp;#44 what a night &amp;#33  Two (2) saucer-shaped&amp;#44 glowing green objects and one (1) brilliantly glowing sphere gliding over the lake.</Description>
+		</Sighting>
+	</Sightings><Ufo-shapes/></Ufo>

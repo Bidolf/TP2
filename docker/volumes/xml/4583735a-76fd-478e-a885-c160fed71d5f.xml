@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Ufo><Sightings><Sighting id="7fef88f7-411d-5669-b42d-bf5fc7f9b58b" ufo_shape_ref="5930cafe-f51b-5140-a33b-5efb5393bdff">
+			<DateTimeEncounter>
+				<Date>1968-10-10</Date>
+				<Time>13:00:00</Time>
+				<Season>Autumn</Season>
+			</DateTimeEncounter>
+			<DateDocumented>2003-10-31</DateDocumented>
+			<Location>
+				<Country>United States</Country>
+				<Region>California</Region>
+				<Locale>Hawthorne</Locale>
+				<Latitude>33.9163889</Latitude>
+				<Longitude>-118.3516667</Longitude>
+			</Location>
+			<EncounterDuration>
+				<Text>5 min.</Text>
+				<SecondsApproximate>300</SecondsApproximate>
+			</EncounterDuration>
+			<Description>ROUND &amp;#44 ORANGE &amp;#44 WITH WHAT I WOULD SAY WAS POLISHED METAL OF SOME KIND AROUND THE EDGES .</Description>
+		</Sighting>
+		<Sighting id="52524d6e-10dc-5261-aa36-8b2efcbaa5f0" ufo_shape_ref="bb23c7c4-d0a3-506d-92a6-25b3022af98a">
+			<DateTimeEncounter>
+				<Date>1968-10-10</Date>
+				<Time>19:00:00</Time>
+				<Season>Autumn</Season>
+			</DateTimeEncounter>
+			<DateDocumented>2008-06-12</DateDocumented>
+			<Location>
+				<Country>United States</Country>
+				<Region>North Carolina</Region>
+				<Locale>Franklin Park</Locale>
+				<Latitude>35.2333333</Latitude>
+				<Longitude>-82.7344444</Longitude>
+			</Location>
+			<EncounterDuration>
+				<Text>3 minutes</Text>
+				<SecondsApproximate>180</SecondsApproximate>
+			</EncounterDuration>
+			<Description>silent red /orange mass of energy floated by three of us in western North Carolina in the 60s</Description>
+		</Sighting>
+		</Sightings><Ufo-shapes/></Ufo>

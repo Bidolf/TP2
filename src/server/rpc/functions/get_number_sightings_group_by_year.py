@@ -1,7 +1,7 @@
 from operator import itemgetter
 
 from lxml import etree
-from src.server.rpc.db_functions.retrieve_xml import retrieve_xml
+from db_functions.retrieve_xml import retrieve_xml
 
 
 def get_number_sightings_group_by_year(singleresult):
@@ -15,7 +15,7 @@ def get_number_sightings_group_by_year(singleresult):
                 years = []
                 root = etree.fromstring(sub_xml)
 
-                for sighting in root.xpath('//Sighting'):
+                for sighting in root.xpath('/Ufo/Sightings/Sighting'):
                     date_string = sighting.xpath('DateTimeEncounter/Date')[0].text
 
                     year = int(date_string[:4])
@@ -28,14 +28,14 @@ def get_number_sightings_group_by_year(singleresult):
             for year, count in sightings_by_year.items():
                 data.append({'year': year, 'count': count})
             if data:
-                print("Data was successfully retrieved", flush=True)
+                print("Data was successfully retrieved")
                 return sorted(data, key=itemgetter('year'))
             else:
-                print("Unable to retrieve schema", flush=True)
+                print("Unable to retrieve schema")
                 return data
         else:
-            print("Unable to retrieve schema", flush=True)
+            print("Unable to retrieve schema")
             return data
     else:
-        print("Unable to retrieve schema", flush=True)
+        print("Unable to retrieve schema")
         return data

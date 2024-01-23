@@ -21,7 +21,7 @@ def db_available_files_add():
         for file_name in file_names:
             files.append(file_name[0])
     except (Exception, psycopg2.Error) as error:
-        print("Failed to return available files", error, flush=True)
+        print("Failed to return available files", error)
 
     finally:
         if connection:
@@ -55,12 +55,12 @@ def db_addfiles(file):
             cursor.execute(
                 'UPDATE converted_documents SET active = TRUE, updated_on = datetime.now() WHERE obtainfile_name(dst) = %s',(file,))
             connection.commit()
-            print(f"File {file} has been added", flush=True)
+            print(f"File {file} has been added")
         else:
-            print(f"File {file} not available or already added", flush=True)
+            print(f"File {file} not available or already added")
 
     except (Exception, psycopg2.Error) as error:
-        print("Failed to add file", error, flush=True)
+        print("Failed to add file", error)
 
     finally:
         if connection:

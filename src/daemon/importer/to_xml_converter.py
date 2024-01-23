@@ -22,25 +22,25 @@ class CSVtoXMLConverter:
         xml_str = ET.tostring(self.to_xml(), encoding='utf8', method='xml').decode()
         print("Parsing xml schema...")
         dom = md.parseString(xml_str)
-        print("Returning xml schema...", flush=True)
+        print("Returning xml schema...")
         return dom.toprettyxml()
 
     def to_xml(self):
         csv = []
-        print("Reading csv file...", flush=True)
+        print("Reading csv file...")
         for row in self._reader.loop():
             csv.append(row)
 
-        print("Creating xml file structure...", flush=True)
+        print("Creating xml file structure...")
         xml_tree = self.create_element_tree(csv)
 
         xml_tree = xml_tree.getroot()
 
         if (self.validate_xml(xml_tree)):
-            print("Dataset has been validated", flush=True)
+            print("Dataset has been validated")
             return xml_tree
         else:
-            print("Dataset has not been validated", flush=True)
+            print("Dataset has not been validated")
 
     def validate_xml(self, tree):
         is_valid = self._schema.validate(tree)

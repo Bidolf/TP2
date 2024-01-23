@@ -37,10 +37,10 @@ if __name__ == "__main__":
         server.register_function(get_number_sightings_group_by_year)
 
         # start the server
-        print(f"Starting the RPC Server in port {PORT}...", flush=True)
+        print(f"Starting the RPC Server in port {PORT}...")
         try:
             server.serve_forever()
         except KeyboardInterrupt:
-            print("exiting, gracefully", flush=True)
+            print("exiting, gracefully")
             server.server_close()
             sys.exit(0)

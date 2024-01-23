@@ -29,7 +29,7 @@ def delete_file(file_name):
 
 @app.route('/get_number_sightings_in_year/<year>', methods=['GET'])
 def get_number_sightings_in_year(year):
-    result = rpc_client.get_number_sightings_in_year(year, 1)
+    result = rpc_client.get_number_sightings_in_year(year)
     return result
 
 

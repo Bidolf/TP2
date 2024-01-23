@@ -20,10 +20,10 @@ def retrieve_xml_group_by_file():
         results_xml = cursor.fetchall()
         for result in results_xml:
             xml.append({'sub_xml': result[0], 'file_name': result[1]})
-        print(f"XML was obtained successfully ", flush=True)
+        print(f"XML was obtained successfully ")
 
     except (Exception, psycopg2.Error) as error:
-        print("Failed to retrieve schema", error, flush=True)
+        print("Failed to retrieve schema", error)
 
     finally:
         if connection:

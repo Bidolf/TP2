@@ -169,7 +169,7 @@ func main() {
 		log.Fatal("Error consuming messages from RabbitMQ:", err)
 	}
 	fmt.Println("Waiting for migration tasks. To exit press CTRL+C")
-	var count = 0
+	var count = 1
 	var res = true
 	for delivery := range messages {
 		res = handleDelivery(delivery, count)

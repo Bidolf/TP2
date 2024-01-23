@@ -1,50 +1,29 @@
-
-.App-header {
-    background-color: #282c34;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+body {
+  background-color: #333;
+  color: #fff;
 }
 
-.App {
-    display: flex;
-    min-height: 100vh;
+.container {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-.App > .Menu {
-    display: flex;
-    flex-flow: column;
-    width: 20rem;
-    min-width: 20rem;
-    max-width: 20rem;
+.label {
+  display: block;
+  margin-bottom: 10px;
+  color: #fff;
 }
 
-.App > .Menu > .Logo {
-    display: flex;
-    flex-flow: row;
-    align-items: center;
-    user-select: none;
+.input {
+  padding: 5px;
+  width: 100%;
 }
 
-.App > .Menu > .Logo > img {
-    width: 25%;
-    padding: 0.5rem;
-}
-
-.App > .Menu > .Logo > .Title {
-    font-family: "Impact";
-}
-
-.App > .Content {
-    background: lightgray;
-    width: 100%;
-    color: black;
-    padding-left: 2rem;
-    padding-bottom: 2rem;
-    padding-right: 2rem;
-    overflow-y: scroll;
+.button {
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #555;
+  color: #fff;
+  cursor: pointer;
 }

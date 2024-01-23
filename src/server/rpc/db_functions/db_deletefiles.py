@@ -20,7 +20,7 @@ def db_available_files_delete():
         for file_name in file_names:
             files.append(file_name[0])
     except (Exception, psycopg2.Error) as error:
-        print("Failed to return available files", error, flush=True)
+        print("Failed to return available files", error)
 
     finally:
         if connection:
@@ -51,12 +51,12 @@ def db_delete(file):
             cursor.execute('UPDATE imported_documents SET active = FALSE, updated_on = datetime.now(), deleted_on = datetime.now() WHERE file_name = %s', (file,))
             cursor.execute('UPDATE converted_documents SET active = FALSE, updated_on = datetime.now() WHERE obtainfile_name(dst) = %s', (file,))
             connection.commit()
-            print(f"File {file} has been soft-deleted", flush=True)
+            print(f"File {file} has been soft-deleted")
         else:
-            print(f"File {file} not available or already deleted", flush=True)
+            print(f"File {file} not available or already deleted")
 
     except (Exception, psycopg2.Error) as error:
-        print("Failed to remove file", error, flush=True)
+        print("Failed to remove file", error)
 
     finally:
         if connection:

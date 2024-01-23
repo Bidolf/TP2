@@ -41,9 +41,9 @@ def delete_file(file):
         return jsonify({'message': "All files are deleted"})
 
 
-def get_number_sightings_in_year(year, singleresult):
+def get_number_sightings_in_year(year):
     arr = []
-    data = PROXY.get_number_sightings_in_year(year, singleresult)
+    data = PROXY.get_number_sightings_in_year(year, 1)
     if data:
         for info in data:
             arr.append({'data': {
@@ -72,6 +72,7 @@ def get_number_sightings_group_by_year():
         return jsonify({'message': 'No matches found'})
 
 
+# ordenar por file_name
 def retrieve_shape_month(shape, month):
     arr = []
     data = PROXY.retrieve_shape_month(shape, month, 0)
@@ -86,6 +87,7 @@ def retrieve_shape_month(shape, month):
                     'DESCRIPTION': item['description']
                 },
                 })
+        return jsonify(arr)
     else:
         return jsonify({'message': 'No matches found for requested shape and month'})
 
@@ -101,10 +103,12 @@ def retrieve_year_region(region, year):
                 'DESCRIPTION': info['description']
             },
             })
+        return jsonify(arr)
     else:
         return jsonify({'message': 'No matches found for requested region and year'})
 
 
+# ordenar por file name
 def retrieve_shape_region(shape):
     arr = []
     data = PROXY.retrieve_shape_region(shape, 0)
@@ -117,29 +121,6 @@ def retrieve_shape_region(shape):
                     'UFOs SIGHTINGS': item['UFOs_sightings']
                 },
                 })
+        return jsonify(arr)
     else:
         return jsonify({'message': 'No matches found for requested shape'})
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

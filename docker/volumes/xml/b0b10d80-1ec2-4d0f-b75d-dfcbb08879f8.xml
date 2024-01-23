@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Ufo><Sightings><Sighting id="91c274f2-9a0d-5ce6-ac3d-7529f452df21" ufo_shape_ref="f242894e-9b1a-5faa-9bb4-9be9fa449a4f">
+			<DateTimeEncounter>
+				<Date>1970-10-10</Date>
+				<Time>16:00:00</Time>
+				<Season>Autumn</Season>
+			</DateTimeEncounter>
+			<DateDocumented>2000-05-11</DateDocumented>
+			<Location>
+				<Country>United States</Country>
+				<Region>New York</Region>
+				<Locale>Nassau County</Locale>
+				<Latitude>40.6686111</Latitude>
+				<Longitude>-73.5275</Longitude>
+			</Location>
+			<EncounterDuration>
+				<Text>30 min.</Text>
+				<SecondsApproximate>1800</SecondsApproximate>
+			</EncounterDuration>
+			<Description>silver disc seen by family and neighbors</Description>
+		</Sighting>
+		<Sighting id="0ff1e264-520d-543a-87dd-181a491e667e" ufo_shape_ref="332ad0bf-a0f2-5e61-aaea-8cb024e574a3">
+			<DateTimeEncounter>
+				<Date>1970-10-10</Date>
+				<Time>19:00:00</Time>
+				<Season>Autumn</Season>
+			</DateTimeEncounter>
+			<DateDocumented>2008-02-14</DateDocumented>
+			<Location>
+				<Country>United States</Country>
+				<Region>Kentucky</Region>
+				<Locale>Manchester</Locale>
+				<Latitude>37.1536111</Latitude>
+				<Longitude>-83.7619444</Longitude>
+			</Location>
+			<EncounterDuration>
+				<Text>3 minutes</Text>
+				<SecondsApproximate>180</SecondsApproximate>
+			</EncounterDuration>
+			<Description>Slow moving&amp;#44 silent craft accelerated at an unbelievable angle and speed.</Description>
+		</Sighting>
+		</Sightings><Ufo-shapes/></Ufo>

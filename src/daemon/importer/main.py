@@ -30,6 +30,8 @@ def count_elements_by_tag(element, tag_name):
 def slice_tree(original_root, qtd_elements):
     new_root = ET.Element('Ufo')
     sightings = ET.SubElement(new_root, 'Sightings')
+    ufo_shapes = ET.SubElement(new_root, 'Ufo-shapes')
+
 
     sightings_to_remove = []
     ufo_shapes_to_remove = []
@@ -45,7 +47,6 @@ def slice_tree(original_root, qtd_elements):
             break
     a = i
     if a < qtd_elements:
-        ufo_shapes = ET.SubElement(new_root, 'Ufo-shapes')
         ufo_shapess = original_root.findall('.//Ufo-shape')
         for ufo_shape in ufo_shapess:
             if a < qtd_elements:
@@ -76,15 +77,15 @@ def convert_csv_to_xml(in_path, out_path, num_xml_parts, xsd_path):
         root = ET.fromstring(xml_str)
 
         sighting_count = count_elements_by_tag(root, 'Sighting')
-        print(f"Total Sightings: {sighting_count}", flush=True)
+        print(f"Total Sightings: {sighting_count}")
         ufo_shape_count = count_elements_by_tag(root, 'Ufo-shape')
-        print(f"Total Ufo-shapes: {ufo_shape_count}", flush=True)
+        print(f"Total Ufo-shapes: {ufo_shape_count}")
         total_elements = sighting_count + ufo_shape_count
-        print(f"Total Elements: {total_elements}", flush=True)
+        print(f"Total Elements: {total_elements}")
         elements_per_part = total_elements // num_xml_parts
         missing_elements = total_elements - (elements_per_part * num_xml_parts)
-        print(f"Elements per part: {elements_per_part}", flush=True)
-        print(f"Missing elements: {missing_elements}", flush=True)
+        print(f"Elements per part: {elements_per_part}")
+        print(f"Missing elements: {missing_elements}")
 
         list_xml_path = []
         i = 0
@@ -97,18 +98,18 @@ def convert_csv_to_xml(in_path, out_path, num_xml_parts, xsd_path):
 
             # Generate a unique file name for the XML file
             xml_path = generate_unique_file_name(out_path)
-            print(f"Writing XML part: {xml_path}...", flush=True)
+            print(f"Writing XML part: {xml_path}...")
 
             new_tree.write(xml_path, xml_declaration=True, encoding='utf-8')
 
-            print(f"XML part has been written", flush=True)
+            print(f"XML part has been written")
             list_xml_path.append(xml_path)
             i += 1
 
         return list_xml_path
 
     except Exception as e:
-        print(f"Error during XML conversion: {e}", flush=True)
+        print(f"Error during XML conversion: {e}")
         raise
 
 
@@ -131,7 +132,7 @@ def update_converted_documents_table(csv_path, list_xml_path):
                 csv_path, xml_path, os.path.getsize(xml_path), True, datetime.now(), datetime.now()))
             connection.commit()
     except (Exception, psycopg2.Error) as error:
-        print("Failed to update converted_documents table", error, flush=True)
+        print("Failed to update converted_documents table", error)
     finally:
         if connection:
             cursor.close()
@@ -159,7 +160,7 @@ def storeXML_imported_documents_table(list_xml_path):
                         """, (xml_path, xml_content, True, datetime.now(), datetime.now(), datetime.now()))
             connection.commit()
     except (Exception, psycopg2.Error) as error:
-        print("Failed to import the XML parts into the imported_documents table", error, flush=True)
+        print("Failed to import the XML parts into the imported_documents table", error)
     finally:
         if connection:
             cursor.close()
@@ -182,22 +183,22 @@ class CSVHandler(FileSystemEventHandler):
     async def convert_csv(self, csv_path):
         # here we avoid converting the same file again
         # !TODO: check converted files in the database
-        print(f"Converting CSV to XML: {csv_path}", flush=True)
+        print(f"Converting CSV to XML: {csv_path}")
         if csv_path in await self.get_converted_files():
-            print(f"CSV path already exists: {csv_path}", flush=True)
+            print(f"CSV path already exists: {csv_path}")
             return
 
-        print(f"new file to convert: '{csv_path}'", flush=True)
+        print(f"new file to convert: '{csv_path}'")
 
         # we do the conversion
         # !TODO: once the conversion is done, we should updated the converted_documents tables
         list_xml_path = convert_csv_to_xml(csv_path, self._output_path, self._num_xml_parts, self._xsd_path)
-        print("All XML parts have been written", flush=True)
+        print("All XML parts have been written")
         update_converted_documents_table(csv_path, list_xml_path)
-        print("The converted_documents table has been updated", flush=True)
+        print("The converted_documents table has been updated")
         # !TODO: we should store the XML document into the imported_documents table
         storeXML_imported_documents_table(list_xml_path)
-        print("All XML parts have been imported into the imported_documents table", flush=True)
+        print("All XML parts have been imported into the imported_documents table")
 
     async def get_converted_files(self):
         # !TODO: you should retrieve from the database the files that were already converted before
@@ -217,7 +218,7 @@ class CSVHandler(FileSystemEventHandler):
             for file_name in file_names:
                 files.append(file_name[0])
         except (Exception, psycopg2.Error) as error:
-            print("Failed to retrieve converted files", error, flush=True)
+            print("Failed to retrieve converted files", error)
         finally:
             if connection:
                 cursor.close()
@@ -226,10 +227,10 @@ class CSVHandler(FileSystemEventHandler):
 
     def on_created(self, event):
         if not event.is_directory and event.src_path.endswith(".csv"):
-            print(f"New CSV file detected: {event.src_path}", flush=True)
+            print(f"New CSV file detected: {event.src_path}")
             asyncio.run(self.convert_csv(event.src_path))
         else:
-            print(f"Ignoring event: {event}", flush=True)
+            print(f"Ignoring event: {event}")
 
 
 def run_observer(csv_input_path, xml_output_path, num_xml_parts, xsd_path):

@@ -37,7 +37,7 @@ export class SightingsUfoShapesController {
   async getSightingById(@Param('id') id: string) {
     try {
       const sighting = await this.service.getSightingById(id);
-      return sighting;
+      return {sighting};
     } catch (error) {
       console.error(error);
       return { error: 'Failed to retrieve sighting' };
@@ -47,7 +47,7 @@ export class SightingsUfoShapesController {
   async getUfoShapeById(@Param('id') id: string) {
     try {
       const ufoShape = await this.service.getUfoShapeById(id);
-      return ufoShape;
+      return {ufoShape};
     } catch (error) {
       console.error(error);
        return { error: 'Failed to retrieve ufo shape' };
@@ -97,7 +97,7 @@ export class SightingsUfoShapesController {
   async getSightingsByUfoShape(@Param('ufoShapeId') ufoShapeId: string) {
     try {
       const sighting = await this.service.getSightingsByUfoShape(ufoShapeId);
-      return sighting;
+      return {sighting};
     } catch (error) {
       console.error(error);
       return { error: 'Failed to retrieve sighting' };
@@ -108,7 +108,7 @@ export class SightingsUfoShapesController {
   async getUfoShapeBySighting(@Param('sightingId') sightingId: string) {
     try {
       const ufo_shape = await this.service.getUfoShapeBySightingId(sightingId);
-      return ufo_shape;
+      return {ufo_shape};
     } catch (error) {
       console.error(error);
       return { error: 'Failed to retrieve ufo shape' };
