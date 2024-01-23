@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Ufo><Sightings><Sighting id="33677b87-bc8d-5ff6-9a25-fe60225e4bf0" ufo_shape_ref="35d4f7fe-6a47-59ea-b221-c07458eefa9f">
+			<DateTimeEncounter>
+				<Date>1949-10-10</Date>
+				<Time>20:30:00</Time>
+				<Season>Autumn</Season>
+			</DateTimeEncounter>
+			<DateDocumented>2009-12-16</DateDocumented>
+			<Location>
+				<Country>United States</Country>
+				<Region>Texas</Region>
+				<Locale>Bexar County</Locale>
+				<Latitude>N/A</Latitude>
+				<Longitude>N/A</Longitude>
+			</Location>
+			<EncounterDuration>
+				<Text>5-2 hrs</Text>
+				<SecondsApproximate>2700</SecondsApproximate>
+			</EncounterDuration>
+			<Description>1953 Lackland AFB&amp;#44 TX.  Lights racing across the sky &amp;amp; making 90 degree turns on a dime.</Description>
+		</Sighting>
+	</Sightings><Ufo-shapes><Ufo-shape id="f242894e-9b1a-5faa-9bb4-9be9fa449a4f">Disk</Ufo-shape>
+		<Ufo-shape id="5930cafe-f51b-5140-a33b-5efb5393bdff">Circle</Ufo-shape>
+		<Ufo-shape id="83b14e7c-9700-5398-a978-94eed6e96e2c">Cylinder</Ufo-shape>
+		<Ufo-shape id="35d4f7fe-6a47-59ea-b221-c07458eefa9f">Light</Ufo-shape>
+		<Ufo-shape id="af57e1bd-7240-5eda-b854-95e68ee479b3">Sphere</Ufo-shape>
+	</Ufo-shapes></Ufo>

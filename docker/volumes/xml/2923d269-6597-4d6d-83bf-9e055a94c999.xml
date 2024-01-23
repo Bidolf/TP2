@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Ufo><Sightings><Sighting id="b04965e6-a9bb-591f-8f8a-1adcb2c8dc39" ufo_shape_ref="f242894e-9b1a-5faa-9bb4-9be9fa449a4f">
+			<DateTimeEncounter>
+				<Date>1949-10-10</Date>
+				<Time>20:30:00</Time>
+				<Season>Autumn</Season>
+			</DateTimeEncounter>
+			<DateDocumented>2000-10-02</DateDocumented>
+			<Location>
+				<Country>United States</Country>
+				<Region>Connecticut</Region>
+				<Locale>Norwalk</Locale>
+				<Latitude>N/A</Latitude>
+				<Longitude>N/A</Longitude>
+			</Location>
+			<EncounterDuration>
+				<Text>21 minutes</Text>
+				<SecondsApproximate>2700</SecondsApproximate>
+			</EncounterDuration>
+			<Description>A bright orange color changing to reddish color disk/saucer was observed hovering above power transmission lines.</Description>
+		</Sighting>
+		<Sighting id="4b166dbe-d99d-5091-abdd-95b83330ed3a" ufo_shape_ref="f242894e-9b1a-5faa-9bb4-9be9fa449a4f">
+			<DateTimeEncounter>
+				<Date>1949-10-10</Date>
+				<Time>20:30:00</Time>
+				<Season>Autumn</Season>
+			</DateTimeEncounter>
+			<DateDocumented>2010-03-19</DateDocumented>
+			<Location>
+				<Country>United States</Country>
+				<Region>Alabama</Region>
+				<Locale>Harrisburg</Locale>
+				<Latitude>N/A</Latitude>
+				<Longitude>N/A</Longitude>
+			</Location>
+			<EncounterDuration>
+				<Text>4  minutes</Text>
+				<SecondsApproximate>2700</SecondsApproximate>
+			</EncounterDuration>
+			<Description>Strobe Lighted disk shape object observed close&amp;#44 at low speeds&amp;#44 and low altitude in Oct 1966 in Pell City Alabama</Description>
+		</Sighting>
+		<Sighting id="98123fde-012f-5ff3-8b50-881449dac91a" ufo_shape_ref="f242894e-9b1a-5faa-9bb4-9be9fa449a4f">
+			<DateTimeEncounter>
+				<Date>1949-10-10</Date>
+				<Time>20:30:00</Time>
+				<Season>Autumn</Season>
+			</DateTimeEncounter>
+			<DateDocumented>2006-05-11</DateDocumented>
+			<Location>
+				<Country>United States</Country>
+				<Region>Florida</Region>
+				<Locale>Live Oak</Locale>
+				<Latitude>N/A</Latitude>
+				<Longitude>N/A</Longitude>
+			</Location>
+			<EncounterDuration>
+				<Text>several minutes</Text>
+				<SecondsApproximate>2700</SecondsApproximate>
+			</EncounterDuration>
+			<Description>Saucer zaps energy from powerline as my pregnant mother receives mental signals not to pass info</Description>
+		</Sighting>
+		</Sightings><Ufo-shapes/></Ufo>

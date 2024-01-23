@@ -9,6 +9,7 @@ export REACT_APP_API_PROC_URL=$API_PROC_URL
 if [ $USE_DEV_MODE = "true" ];
   then
     npm run start;
+    node server.js
   else
     npm run build;
     node server $WEB_PORT;

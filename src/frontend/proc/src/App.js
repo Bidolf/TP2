@@ -14,7 +14,7 @@ function App() {
 
   const testConnection = async () => {
     try {
-      const response = await axios.get('/test_conn');
+      const response = await axios.get('http://localhost:5000/test_conn');
       setTestResult(JSON.stringify(response.data, null, 2));
     } catch (error) {
       console.error('Error calling test_conn:', error);
@@ -23,7 +23,7 @@ function App() {
 
   const addFile = async () => {
     try {
-      const response = await axios.patch(`/add_file/${fileName}`);
+      const response = await axios.patch(`http://localhost:5000/add_file/${fileName}`);
       setAddFileResult(JSON.stringify(response.data, null, 2));
     } catch (error) {
       console.error('Error calling add_file:', error);
@@ -32,7 +32,7 @@ function App() {
 
   const deleteFile = async () => {
     try {
-      const response = await axios.patch(`/delete_file/${fileName}`);
+      const response = await axios.patch(`http://localhost:5000/delete_file/${fileName}`);
       setDeleteFileResult(JSON.stringify(response.data, null, 2));
     } catch (error) {
       console.error('Error calling delete_file:', error);
