@@ -1,6 +1,7 @@
 import json
 import sys
 import time
+import threading
 import pika
 import daemon
 import requests
@@ -32,9 +33,9 @@ def update_entity(entity_json):
         entity_lat, entity_long = coordinates
         # entity["Location"]["Latitude"] = entity_lat
         # entity["Location"]["Longitude"] = entity_long
-        entity_point = 'POINT('+entity_long+' '+entity_lat+')'
+        # entity_point = 'POINT('+entity_long+' '+entity_lat+')'
         # print(entity)
-        send_patch(entity["ID"], entity_point, entity_lat, entity_long)
+        send_patch(entity["ID"], entity_lat, entity_long)
     else:
         print("Error: Could not find coordinates")
 
@@ -74,11 +75,10 @@ def get_coordinates(country, region, locale):
     return None
 
 
-def send_patch(id, point, latitude, longitude):
+def send_patch(id, latitude, longitude):
     url = HOSTNAME + "/api/entity/" + id
     data = {
         'id': id,
-        'point': point,
         'latitude': latitude,
         'longitude': longitude
     }
@@ -114,7 +114,8 @@ def consume_messages(channel, routing_key, num_messages):
                 break
         else:
             break
-    return messages_received
+
+    print(f"Updated {messages_received} sightings.")
 
 
 def callback(channel, method, properties, body):
@@ -139,10 +140,13 @@ def main():
             messages_to_receive = ENTITIES_PER_ITERATION
 
             print(f"Getting up to {messages_to_receive} sightings without coordinates...")
+            thread = threading.Thread(
+                target=consume_messages,
+                args=(channel, ROUTING_KEY_GEO_DATA_UPDATE, messages_to_receive)
+            )
 
-            messages_received = consume_messages(channel, ROUTING_KEY_GEO_DATA_UPDATE, messages_to_receive)
-
-            print(f"Updated {messages_received} sightings.")
+            # Start the thread
+            thread.start()
 
             time.sleep(POLLING_FREQ)
         except KeyboardInterrupt:

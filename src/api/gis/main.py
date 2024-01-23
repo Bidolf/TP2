@@ -1,6 +1,6 @@
 import sys
 import json
-import db_functions
+import db_functions as db
 
 from flask import Flask, request, jsonify
 
@@ -14,7 +14,8 @@ app.config["DEBUG"] = True
 def update_sighting(id):
     try:
         data = json.loads(request.data)
-        result = db_functions.update_sighting(data)
+        print(data, flush=True)
+        result = db.update_sighting(data)
         if result == 1:
             return jsonify({"message": f"Sighting with ID {id} updated successfully", "data": ""})
         else:
@@ -23,10 +24,17 @@ def update_sighting(id):
         return jsonify({"error": f"Internal Server Error: {str(e)}"}), 500
 
 
-
 @app.route('/api/tile', methods=['GET'])
 def get_sightings_in_area():
-    pass
+    ne_lat = float(request.args.get('neLat'))
+    ne_lng = float(request.args.get('neLng'))
+    sw_lat = float(request.args.get('swLat'))
+    sw_lng = float(request.args.get('swLng'))
+
+    result = db.get_sightings_in_area(ne_lat, ne_lng, sw_lat, sw_lng)
+    print("number of sightings: ", len(result))
+    return jsonify(result)
+
 
 @app.route('/', methods=['GET'])
 def test():
