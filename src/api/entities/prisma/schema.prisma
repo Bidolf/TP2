@@ -13,7 +13,7 @@ datasource db {
 
 
 model Sighting {
-  id                      String      @id
+  id                      String     @unique
   ufo_shape_ref           String
   date_encounter          String?
   time_encounter          String?
@@ -32,7 +32,7 @@ model Sighting {
 }
 
 model Ufo_shape {
-  id         String     @id
+  id         String     @unique
   shape_name String?
   sightings  Sighting[]
   @@map(name: "ufo_shapes")
