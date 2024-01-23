@@ -161,11 +161,9 @@ services:
         environment:
             USE_DEV_MODE: ${USE_DEV_MODE}
             WEB_PORT: ${EXT_PORT_FRONTEND_PROC}
-            API_GRAPHQL_URL: "localhost:${EXT_PORT_API_GRAPHQL}"
             API_PROC_URL: "localhost:${EXT_PORT_API_PROC}"
         depends_on:
             - api-proc
-            - api-graphql
 
     # Container that runs the API for gis
     api-gis:
