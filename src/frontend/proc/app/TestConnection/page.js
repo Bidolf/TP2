@@ -27,9 +27,6 @@ const TestConnection = () => {
 
   return (
     <Container>
-      <Typography variant="h4" gutterBottom>
-        API Interaction
-      </Typography>
       <Box>
         <Button style={{
     backgroundColor: "#1976D2",
@@ -47,9 +44,9 @@ const TestConnection = () => {
         {showResult && testConnectionResult && (
           <Typography style={{
     marginTop: 10,
-    color: theme.palette.text.primary,
+    color: "#1976D2",
   }} variant="body1">
-            Result: {testConnectionResult}
+            {testConnectionResult}
           </Typography>
         )}
       </Box>
