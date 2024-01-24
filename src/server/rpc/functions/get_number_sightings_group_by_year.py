@@ -31,11 +31,11 @@ def get_number_sightings_group_by_year(singleresult):
                 print("Data was successfully retrieved")
                 return sorted(data, key=itemgetter('year'))
             else:
-                print("Unable to retrieve schema")
+                print("Unable to retrieve data")
                 return data
         else:
-            print("Unable to retrieve schema")
+            print("Unable to retrieve xml")
             return data
     else:
-        print("Unable to retrieve schema")
+        print("singleresult = true")
         return data

@@ -16,8 +16,8 @@ def get_csv_files_in_input_folder():
             os.path.splitext(f)[1] == '.csv']
 
 
-def generate_unique_file_name(directory):
-    return f"{directory}/{str(uuid.uuid4())}.xml"
+def generate_unique_file_name():
+    return f"{str(uuid.uuid4())}.xml"
 
 
 def count_elements_by_tag(element, tag_name):
@@ -97,13 +97,14 @@ def convert_csv_to_xml(in_path, out_path, num_xml_parts, xsd_path):
             new_tree = ET.ElementTree(new_root)
 
             # Generate a unique file name for the XML file
-            xml_path = generate_unique_file_name(out_path)
-            print(f"Writing XML part: {xml_path}...")
+            xml_name = generate_unique_file_name()
+            print(f"Writing XML part: {xml_name}...")
 
+            xml_path = out_path + "/" + xml_name
             new_tree.write(xml_path, xml_declaration=True, encoding='utf-8')
 
             print(f"XML part has been written")
-            list_xml_path.append(xml_path)
+            list_xml_path.append(xml_name)
             i += 1
 
         return list_xml_path

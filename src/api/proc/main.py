@@ -9,6 +9,10 @@ app = Flask(__name__)
 app.config["DEBUG"] = True
 CORS(app)
 
+@app.route('/', methods=['GET'])
+def test():
+    return "Hello, from api-proc"
+
 @app.route('/test_conn', methods=['GET'])
 def test_conn():
     result = rpc_client.test_connection()

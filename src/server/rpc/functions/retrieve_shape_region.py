@@ -14,6 +14,7 @@ def retrieve_shape_region(shape, singleresult):
         if xml:
             for sub_xml1 in xml:
                 root = etree.fromstring(sub_xml1['sub_xml'])
+                print(f"/Ufo/Ufo-shapes/Ufo-shape[text()='{shape}']/@id")
                 id_value = root.xpath(f"/Ufo/Ufo-shapes/Ufo-shape[text()='{shape}']/@id")
                 if id_value:
                     break
@@ -22,6 +23,7 @@ def retrieve_shape_region(shape, singleresult):
                     root = etree.fromstring(sub_xml['sub_xml'])
                     xpath_expr = f"/Ufo/Sightings/Sighting[@ufo_shape_ref = '{id_value[0]}']"
                     matching_sightings = root.xpath(xpath_expr)
+                    print("sightings: ",matching_sightings)
                     if matching_sightings:
                         region_counts = {}
                         for sighting in matching_sightings:
@@ -43,16 +45,17 @@ def retrieve_shape_region(shape, singleresult):
                     for key, group in grouped_info.items():
                         grouped_info[key] = sorted(group, key=itemgetter('UFOs_sightings'))
                     print("Data was successfully retrieved")
+                    print(grouped_info)
                     return grouped_info
                 else:
-                    print("Unable to retrieve schema")
+                    print("Found no results")
                     return data
             else:
-                print("Unable to retrieve schema")
+                print("ID value is false")
                 return data
         else:
-            print("Unable to retrieve schema")
+            print("Unable to retrieve xml")
             return data
     else:
-        print("Unable to retrieve schema")
+        print("singleresult = true")
         return data

@@ -86,6 +86,7 @@ def retrieve_shape_month(shape, month):
                     'DESCRIPTION': item['description']
                 },
                 })
+        print(arr)
         return jsonify(arr)
     else:
         return jsonify({'message': 'No matches found for requested shape and month'})

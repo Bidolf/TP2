@@ -41,14 +41,14 @@ def retrieve_shape_month(shape, month, singleresult):
                     print("Data was successfully retrieved")
                     return grouped_info
                 else:
-                    print("Unable to retrieve schema")
+                    print("Unable to retrieve data")
                     return data
             else:
-                print("Unable to retrieve schema")
+                print("ID value is false")
                 return data
         else:
-            print("Unable to retrieve schema")
+            print("Unable to retrieve xml")
             return data
     else:
-        print("Unable to retrieve schema")
+        print("singleresult = true")
         return data

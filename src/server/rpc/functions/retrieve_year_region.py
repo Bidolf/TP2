@@ -14,7 +14,7 @@ def retrieve_year_region(region, year, singleresult):
                 xpath_expr = f"/Ufo/Sightings/Sighting[DateTimeEncounter/Date[starts-with(text(), '{year}')]]\
                                      [Location/Region[text() = '{region}']]"
                 matching_sightings = root.xpath(xpath_expr)
-                if matching_sightings:
+                if len(matching_sightings) > 0:
                     for sighting in matching_sightings:
                         sighting_id = sighting.get("ufo_shape_ref")
                         for sub_xml1 in xml:
@@ -31,14 +31,14 @@ def retrieve_year_region(region, year, singleresult):
                         }
                         retrieve_info.append(data)
             if retrieve_info:
-                print("Data was successfully retrieved")
+                print("Data was successfully retrieved", flush=True)
                 return retrieve_info
             else:
-                print("Unable to retrieve schema")
+                print("Unable to retrieve data", flush=True)
                 return data
         else:
-            print("Unable to retrieve schema")
+            print("Unable to retrieve xml")
             return data
     else:
-        print("Unable to retrieve schema")
+        print("singleresult = true")
         return data
