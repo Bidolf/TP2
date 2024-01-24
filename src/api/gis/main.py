@@ -10,6 +10,11 @@ app = Flask(__name__)
 app.config["DEBUG"] = True
 
 
+@app.route('/', methods=['GET'])
+def test():
+    return "Hello, from api-gis"
+
+
 @app.route('/api/entity/<id>', methods=['PATCH'])
 def update_sighting(id):
     try:
@@ -34,11 +39,6 @@ def get_sightings_in_area():
     result = db.get_sightings_in_area(ne_lat, ne_lng, sw_lat, sw_lng)
     print("number of sightings: ", len(result))
     return jsonify(result)
-
-
-@app.route('/', methods=['GET'])
-def test():
-    return "Hello, world!"
 
 
 if __name__ == '__main__':

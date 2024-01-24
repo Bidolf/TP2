@@ -7,6 +7,10 @@ PORT = int(sys.argv[1]) if len(sys.argv) >= 2 else 8080
 app = Flask(__name__)
 app.config["DEBUG"] = True
 
+@app.route('/', methods=['GET'])
+def test():
+    return "Hello, from api-proc"
+
 @app.route('/test_conn', methods=['GET'])
 def test_conn():
     result = rpc_client.test_connection()

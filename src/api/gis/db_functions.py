@@ -80,7 +80,6 @@ def get_sightings_in_area(ne_lat, ne_long, sw_lat, sw_long):
         )
 
         rows = cursor.fetchall()
-        print(rows, flush=True)
 
     except (Exception, psycopg2.Error) as error:
         print("Failed to get sightings in area", error, flush=True)
