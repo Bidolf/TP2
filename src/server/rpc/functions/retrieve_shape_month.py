@@ -15,6 +15,8 @@ def retrieve_shape_month(shape, month, singleresult):
             for xmll1 in xml:
                 root = etree.fromstring(xmll1['sub_xml'])
                 id_value = root.xpath(f"/Ufo/Ufo-shapes/Ufo-shape[text()='{shape}']/@id")
+                if id_value:
+                    break
             if id_value:
                 for xmll in xml:
                     root = etree.fromstring(xmll['sub_xml'])
@@ -39,14 +41,14 @@ def retrieve_shape_month(shape, month, singleresult):
                     print("Data was successfully retrieved")
                     return grouped_info
                 else:
-                    print("Unable to retrieve schema")
+                    print("Unable to retrieve data")
                     return data
             else:
-                print("Unable to retrieve schema")
+                print("ID value is false")
                 return data
         else:
-            print("Unable to retrieve schema")
+            print("Unable to retrieve xml")
             return data
     else:
-        print("Unable to retrieve schema")
+        print("singleresult = true")
         return data
