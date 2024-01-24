@@ -15,6 +15,8 @@ def retrieve_shape_region(shape, singleresult):
             for sub_xml1 in xml:
                 root = etree.fromstring(sub_xml1['sub_xml'])
                 id_value = root.xpath(f"/Ufo/Ufo-shapes/Ufo-shape[text()='{shape}']/@id")
+                if id_value:
+                    break
             if id_value:
                 for sub_xml in xml:
                     root = etree.fromstring(sub_xml['sub_xml'])

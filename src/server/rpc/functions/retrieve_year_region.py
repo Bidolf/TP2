@@ -16,14 +16,16 @@ def retrieve_year_region(region, year, singleresult):
                 matching_sightings = root.xpath(xpath_expr)
                 if matching_sightings:
                     for sighting in matching_sightings:
-                        sighting_id = sighting.get("id")
+                        sighting_id = sighting.get("ufo_shape_ref")
                         for sub_xml1 in xml:
                             root = etree.fromstring(sub_xml1)
                             shape = root.xpath(f"/Ufo/Ufo-shapes/Ufo-shape[@id='{sighting_id}']/text()")
+                            if shape:
+                                break
                         data = {
                             'region': sighting.find("Location/Region").text,
                             'year': sighting.find("DateTimeEncounter/Date").text.split('-')[0],
-                            'ufo_shape': shape[0],
+                            'ufo_shape': str(shape[0]),
                             'encounter_duration': sighting.find("EncounterDuration/Text").text,
                             'description': sighting.find("Description").text,
                         }

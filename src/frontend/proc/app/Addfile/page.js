@@ -5,7 +5,7 @@ import { Button, Container, Typography, Box, TextField } from "@mui/material";
 
 const AddFile = () => {
   const [fileName, setFileName] = useState('');
-  const [addFileResult, setAddFileResult] = useState("null");
+  const [addFileResult, setAddFileResult] = useState("");
   const [showResult, setShowResult] = useState(false);
 
   const handleAddFileClick = async () => {
@@ -25,7 +25,8 @@ const AddFile = () => {
       }, 10000);
     } catch (error) {
       console.error('Error:', error);
-      setAddFileResult("null");
+      setAddFileResult("");
+      setShowResult(false);
     }
   };
 
@@ -50,14 +51,14 @@ const AddFile = () => {
             },
           }}
           onClick={handleAddFileClick}
-          disabled={!fileName.trim()} // Disable if fileName is empty
+          disabled={!fileName.trim()}
         >
           Add File
         </Button>
         {showResult && addFileResult && (
           <Typography style={{
             marginTop: 10,
-            color: "#000", //  text color
+            color: "#000",
           }} variant="body1">
             {addFileResult}
           </Typography>

@@ -72,7 +72,6 @@ def get_number_sightings_group_by_year():
         return jsonify({'message': 'No matches found'})
 
 
-# ordenar por file_name
 def retrieve_shape_month(shape, month):
     arr = []
     data = PROXY.retrieve_shape_month(shape, month, 0)
@@ -80,7 +79,7 @@ def retrieve_shape_month(shape, month):
         for key, group in data.items():
             for item in group:
                 arr.append({'data': {
-                    'FILE NAME': {key},
+                    'FILE NAME': key,
                     'YEAR': item['year'],
                     'REGION': item['region'],
                     'ENCOUNTER DURATION': item['encounter_duration'],
@@ -108,7 +107,6 @@ def retrieve_year_region(region, year):
         return jsonify({'message': 'No matches found for requested region and year'})
 
 
-# ordenar por file name
 def retrieve_shape_region(shape):
     arr = []
     data = PROXY.retrieve_shape_region(shape, 0)
@@ -116,7 +114,7 @@ def retrieve_shape_region(shape):
         for key, group in data.items():
             for item in group:
                 arr.append({'data': {
-                    'FILE NAME': {key},
+                    'FILE NAME': key,
                     'REGION': item['region'],
                     'UFOs SIGHTINGS': item['UFOs_sightings']
                 },

@@ -5,7 +5,7 @@ import { Button, Container, Typography, Box, TextField } from "@mui/material";
 
 const DeleteFile = () => {
   const [fileName, setFileName] = useState('');
-  const [deleteFileResult, setDeleteFileResult] = useState("null");
+  const [deleteFileResult, setDeleteFileResult] = useState("");
   const [showResult, setShowResult] = useState(false);
 
   const handleDeleteFileClick = async () => {
@@ -25,7 +25,8 @@ const DeleteFile = () => {
       }, 10000);
     } catch (error) {
       console.error('Error:', error);
-      setDeleteFileResult("null");
+      setDeleteFileResult("");
+      setShowResult(false);
     }
   };
 
@@ -50,14 +51,14 @@ const DeleteFile = () => {
             },
           }}
           onClick={handleDeleteFileClick}
-          disabled={!fileName.trim()} // Disable if fileName is empty
+          disabled={!fileName.trim()}
         >
           Delete File
         </Button>
         {showResult && deleteFileResult && (
           <Typography style={{
             marginTop: 10,
-            color: "#000", // text color
+            color: "#000",
           }} variant="body1">
              {deleteFileResult}
           </Typography>

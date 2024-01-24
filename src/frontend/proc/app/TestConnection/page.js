@@ -3,7 +3,7 @@ import React, {  useState } from 'react';
 import axios from 'axios';
 import { Button, Container, Typography, Box } from "@mui/material";
 const TestConnection = () => {
-  const [testConnectionResult, setTestConnectionResult] = useState('null');
+  const [testConnectionResult, setTestConnectionResult] = useState('');
   const [showResult, setShowResult] = useState(false);
 
   const fetchTestConnection = async () => {
@@ -16,12 +16,12 @@ const TestConnection = () => {
       }, 10000);
     } catch (error) {
       console.error('Error:', error);
-      setTestConnectionResult('null');
+      setTestConnectionResult('');
+      setShowResult(false);
     }
   };
 
   const handleTestConnectionClick = async () => {
-    // Call the function to fetch test connection when the user clicks the button
     await fetchTestConnection();
   };
 
