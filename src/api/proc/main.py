@@ -1,11 +1,13 @@
 import sys
 import rpc_client
+from flask_cors import CORS
 from flask import Flask
 
 PORT = int(sys.argv[1]) if len(sys.argv) >= 2 else 8080
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
+CORS(app)
 
 @app.route('/', methods=['GET'])
 def test():
