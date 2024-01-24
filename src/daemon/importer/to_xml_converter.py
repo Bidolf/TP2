@@ -52,7 +52,6 @@ class CSVtoXMLConverter:
         ufo_shapes = ET.SubElement(root, 'Ufo-shapes')
         ufo_shapes_dict = {}
         namespace_uuid = uuid.NAMESPACE_DNS
-        count = 0
         for row in csv:
             parsed_ufo_shape = alter_if_empty_value(row.get('UFO_shape'), "Unknown")
             if parsed_ufo_shape not in ufo_shapes_dict:
@@ -62,8 +61,7 @@ class CSVtoXMLConverter:
                 ufo_shapes_dict[parsed_ufo_shape] = ufo_shape_id
             else:
                 ufo_shape_id = ufo_shapes_dict[parsed_ufo_shape]
-            count += 1
-            sighting_id = str(uuid.uuid5(namespace_uuid, str(count)))
+            sighting_id = str(uuid.uuid5(namespace_uuid, row.get('')))
             sighting = ET.SubElement(sightings, "Sighting", id=sighting_id, ufo_shape_ref=ufo_shape_id)
 
             date_time_encounter = ET.SubElement(sighting, "DateTimeEncounter")

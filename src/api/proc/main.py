@@ -1,13 +1,11 @@
 import sys
 import rpc_client
-
 from flask import Flask
 
 PORT = int(sys.argv[1]) if len(sys.argv) >= 2 else 8080
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
-
 
 @app.route('/test_conn', methods=['GET'])
 def test_conn():

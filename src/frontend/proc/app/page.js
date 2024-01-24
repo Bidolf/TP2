@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import TestConnection from './TestConnection.js';
 
 export default function Home() {
     return (
@@ -17,6 +17,8 @@ export default function Home() {
                 <p>
                     The goal of this app is to make available all remote procedures in an UI.
                 </p>
+                <br/>
+                <TestConnection />
                 <br/>
                 <hr/>
                 <p className={"italic"}>
