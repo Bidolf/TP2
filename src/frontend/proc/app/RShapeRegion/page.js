@@ -5,7 +5,7 @@ import { Button, Container, Typography, Box, Select, MenuItem, TextField } from 
 
 const ShapeRegionInfo = () => {
   const [shape, setShape] = useState('');
-  const [shapeRegionInfoResult, setShapeRegionInfoResult] = useState("null");
+  const [shapeRegionInfoResult, setShapeRegionInfoResult] = useState("");
   const [showResult, setShowResult] = useState(false);
 
   const handleRetrieveShapeRegionClick = async () => {
@@ -35,7 +35,7 @@ const ShapeRegionInfo = () => {
       }
     } catch (error) {
       console.error('Error:', error);
-      setShapeRegionInfoResult("null");
+      setShapeRegionInfoResult("");
       setShowResult(false);
     }
   };
