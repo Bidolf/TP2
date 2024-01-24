@@ -87,7 +87,7 @@ def convert_csv_to_xml(in_path, out_path, num_xml_parts, xsd_path):
         print(f"Elements per part: {elements_per_part}")
         print(f"Missing elements: {missing_elements}")
 
-        list_xml_path = []
+        list_xml_name = []
         i = 0
         while i < num_xml_parts:
             if i == num_xml_parts - 1:
@@ -104,17 +104,17 @@ def convert_csv_to_xml(in_path, out_path, num_xml_parts, xsd_path):
             new_tree.write(xml_path, xml_declaration=True, encoding='utf-8')
 
             print(f"XML part has been written")
-            list_xml_path.append(xml_name)
+            list_xml_name.append(xml_name)
             i += 1
 
-        return list_xml_path
+        return list_xml_name
 
     except Exception as e:
         print(f"Error during XML conversion: {e}")
         raise
 
 
-def update_converted_documents_table(csv_path, list_xml_path):
+def update_converted_documents_table(csv_path, list_xml_name):
     connection = None
     cursor = None
     try:
@@ -125,7 +125,8 @@ def update_converted_documents_table(csv_path, list_xml_path):
                                       database="is")
 
         cursor = connection.cursor()
-        for xml_path in list_xml_path:
+        for xml_name in list_xml_name:
+            xml_path = "/xml/"+xml_name
             cursor.execute("""
                             INSERT INTO "converted_documents" (src, dst, file_size, active, created_on, updated_on)
                             VALUES (%s, %s, %s, %s, %s, %s)
@@ -141,7 +142,7 @@ def update_converted_documents_table(csv_path, list_xml_path):
     return 1
 
 
-def storeXML_imported_documents_table(list_xml_path):
+def storeXML_imported_documents_table(list_xml_name):
     connection = None
     cursor = None
     try:
@@ -152,13 +153,14 @@ def storeXML_imported_documents_table(list_xml_path):
                                       database="is")
 
         cursor = connection.cursor()
-        for xml_path in list_xml_path:
+        for xml_name in list_xml_name:
+            xml_path = "/xml/"+xml_name
             with open(xml_path, 'r', encoding='utf-8') as xml_file:
                 xml_content = xml_file.read()
             cursor.execute("""
                             INSERT INTO "imported_documents" (file_name, xml, active, created_on, updated_on, deleted_on)
                             VALUES (%s, %s, %s, %s, %s, %s)
-                        """, (xml_path, xml_content, True, datetime.now(), datetime.now(), datetime.now()))
+                        """, (xml_name, xml_content, True, datetime.now(), datetime.now(), datetime.now()))
             connection.commit()
     except (Exception, psycopg2.Error) as error:
         print("Failed to import the XML parts into the imported_documents table", error)
@@ -193,12 +195,12 @@ class CSVHandler(FileSystemEventHandler):
 
         # we do the conversion
         # !TODO: once the conversion is done, we should updated the converted_documents tables
-        list_xml_path = convert_csv_to_xml(csv_path, self._output_path, self._num_xml_parts, self._xsd_path)
+        list_xml_name = convert_csv_to_xml(csv_path, self._output_path, self._num_xml_parts, self._xsd_path)
         print("All XML parts have been written")
-        update_converted_documents_table(csv_path, list_xml_path)
+        update_converted_documents_table(csv_path, list_xml_name)
         print("The converted_documents table has been updated")
         # !TODO: we should store the XML document into the imported_documents table
-        storeXML_imported_documents_table(list_xml_path)
+        storeXML_imported_documents_table(list_xml_name)
         print("All XML parts have been imported into the imported_documents table")
 
     async def get_converted_files(self):
