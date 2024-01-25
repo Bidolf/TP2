@@ -13,7 +13,7 @@ export class SightingsUfoShapesController {
       return { error: 'Failed to create Entity' };
     }
   }
-  @Patch('sightings/:id')
+  @Patch('sightings/patch/:id')
   async updateSighting(@Param('id') id: string, @Body() updatedSightingData: any) {
     try {
       await this.service.updateSighting(id, updatedSightingData);
@@ -23,7 +23,7 @@ export class SightingsUfoShapesController {
       return { error: 'Failed to update sighting' };
     }
   }
-  @Delete('sightings/:id')
+  @Delete('sightings/delete/:id')
   async deleteSighting(@Param('id') id: string) {
     try {
       await this.service.deleteSighting(id);
@@ -53,7 +53,7 @@ export class SightingsUfoShapesController {
        return { error: 'Failed to retrieve ufo shape' };
     }
   }
-  @Patch('ufo_shapes/:id')
+  @Patch('ufo_shapes/patch/:id')
   async updateUfoShape(@Param('id') id: string, @Body() updatedUfoShapeData: any) {
     try {
       await this.service.updateUfoShape(id, updatedUfoShapeData);
@@ -63,7 +63,7 @@ export class SightingsUfoShapesController {
        return { error: 'Failed to update ufo shape' };
     }
   }
-  @Delete('ufo_shapes/:id')
+  @Delete('ufo_shapes/delete/:id')
   async deleteUfoShape(@Param('id') id: string) {
     try {
       await this.service.deleteUfoShape(id);
