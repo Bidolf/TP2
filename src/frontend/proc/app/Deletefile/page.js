@@ -60,7 +60,7 @@ const DeleteFile = () => {
             marginTop: 10,
             color: "#000",
           }} variant="body1">
-             {deleteFileResult}
+            {deleteFileResult}
           </Typography>
         )}
       </Box>

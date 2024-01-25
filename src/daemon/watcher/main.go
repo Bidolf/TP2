@@ -371,7 +371,7 @@ func main() {
 			}
 			fmt.Println("Sent ", count, " messages of ufo_shapes to ", geoDataUpdateRoutingKey)
 
-			fmt.Printf("Total Files: %d; Sightings: %d; Shapes: %d", fileCounter, sightingCounter, shapeCounter)
+			fmt.Println("Total Files: %d; Sightings: %d; Shapes: %d", fileCounter, sightingCounter, shapeCounter)
 		} else {
 			fmt.Println("No files found.")
 		}

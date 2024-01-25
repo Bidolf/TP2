@@ -65,14 +65,14 @@ const ShapeRegionInfo = () => {
         >
           Retrieve Shape Region Info
         </Button>
-          {!showResult && shapeRegionInfoResult && (
- <Typography style={{
+        {!showResult && shapeRegionInfoResult && (
+          <Typography style={{
             marginTop: 10,
             color: "#000",
           }} variant="body1">
-             {shapeRegionInfoResult}
+            {shapeRegionInfoResult}
           </Typography>
-)}
+        )}
         {showResult && shapeRegionInfoResult && (
           <>
             <table style={{ width: '100%', marginTop: 10 }}>

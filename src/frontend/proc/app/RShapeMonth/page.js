@@ -16,19 +16,19 @@ const ShapeMonthInfo = () => {
     try {
       const response = await axios.get(`http://localhost:20004/retrieve_shape_month/${shape}/${month}`);
       if (Array.isArray(response.data) && response.data.length > 0) {
-          const extractedData = response.data.map(item => ({
-              FILE_NAME: item.data['FILE NAME'],
-              YEAR: item.data['YEAR'],
-              REGION: item.data['REGION'],
-              ENCOUNTER_DURATION: item.data['ENCOUNTER DURATION'],
-              DESCRIPTION: item.data['DESCRIPTION']
-          }));
-          const formattedResult = extractedData.map(item => (
-              `FILE_NAME: ${item.FILE_NAME}, YEAR: ${item.YEAR}, REGION: ${item.REGION}, ENCOUNTER_DURATION: ${item.ENCOUNTER_DURATION}, DESCRIPTION: ${item.DESCRIPTION}`
-          )).join('<br />');
-          setShapeMonthInfoResult(formattedResult);
-          setShowResult(true);
-      }else if ('message' in response.data) {
+        const extractedData = response.data.map(item => ({
+          FILE_NAME: item.data['FILE NAME'],
+          YEAR: item.data['YEAR'],
+          REGION: item.data['REGION'],
+          ENCOUNTER_DURATION: item.data['ENCOUNTER DURATION'],
+          DESCRIPTION: item.data['DESCRIPTION']
+        }));
+        const formattedResult = extractedData.map(item => (
+          `FILE_NAME: ${item.FILE_NAME}, YEAR: ${item.YEAR}, REGION: ${item.REGION}, ENCOUNTER_DURATION: ${item.ENCOUNTER_DURATION}, DESCRIPTION: ${item.DESCRIPTION}`
+        )).join('<br />');
+        setShapeMonthInfoResult(formattedResult);
+        setShowResult(true);
+      } else if ('message' in response.data) {
         setShapeMonthInfoResult(response.data.message);
         setShowResult(false);
       } else {
@@ -43,9 +43,9 @@ const ShapeMonthInfo = () => {
   };
 
   const months = Array.from({ length: 12 }, (_, index) => {
-  const monthNumber = index + 1;
-  return monthNumber < 10 ? `0${monthNumber}` : `${monthNumber}`;
-});
+    const monthNumber = index + 1;
+    return monthNumber < 10 ? `0${monthNumber}` : `${monthNumber}`;
+  });
 
   return (
     <Container>
@@ -57,17 +57,17 @@ const ShapeMonthInfo = () => {
           style={{ marginRight: 10 }}
         />
         <Select
-  label="Month"
-  value={month}
-  onChange={(e) => setMonth(String(e.target.value))}
-  style={{ marginRight: 10 }}
->
-  {months.map((m) => (
-    <MenuItem key={m} value={m}>
-      {m}
-    </MenuItem>
-  ))}
-</Select>
+          label="Month"
+          value={month}
+          onChange={(e) => setMonth(String(e.target.value))}
+          style={{ marginRight: 10 }}
+        >
+          {months.map((m) => (
+            <MenuItem key={m} value={m}>
+              {m}
+            </MenuItem>
+          ))}
+        </Select>
         <Button
           style={{
             backgroundColor: "#1976D2",
@@ -84,14 +84,14 @@ const ShapeMonthInfo = () => {
         >
           Retrieve Shape Month Info
         </Button>
-{!showResult && shapeMonthInfoResult && (
- <Typography style={{
+        {!showResult && shapeMonthInfoResult && (
+          <Typography style={{
             marginTop: 10,
             color: "#000",
           }} variant="body1">
-             {shapeMonthInfoResult}
+            {shapeMonthInfoResult}
           </Typography>
-)}
+        )}
         {showResult && shapeMonthInfoResult && (
           <>
             <table style={{ width: '100%', marginTop: 10 }}>

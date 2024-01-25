@@ -81,13 +81,13 @@ const YearRegionInfo = () => {
           Retrieve Year Region Info
         </Button>
         {!showResult && yearRegionInfoResult && (
- <Typography style={{
+          <Typography style={{
             marginTop: 10,
             color: "#000",
           }} variant="body1">
-             {yearRegionInfoResult}
+            {yearRegionInfoResult}
           </Typography>
-)}
+        )}
         {showResult && yearRegionInfoResult && (
           <>
             <table style={{ width: '100%', marginTop: 10 }}>

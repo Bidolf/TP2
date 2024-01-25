@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import axios from 'axios';
-import {Button, Container, Typography, Box, TextField, Select, MenuItem} from "@mui/material";
+import { Button, Container, Typography, Box, TextField, Select, MenuItem } from "@mui/material";
 const SightingsInfo = () => {
   const [sightingsInfoResult, setSightingsInfoResult] = useState("");
   const [showResult, setShowResult] = useState(false);
@@ -52,14 +52,14 @@ const SightingsInfo = () => {
         >
           Get Sightings Info
         </Button>
-          {!showResult && sightingsInfoResult && (
- <Typography style={{
+        {!showResult && sightingsInfoResult && (
+          <Typography style={{
             marginTop: 10,
             color: "#000",
           }} variant="body1">
-             {sightingsInfoResult}
+            {sightingsInfoResult}
           </Typography>
-)}
+        )}
         {showResult && sightingsInfoResult && (
           <>
             <table style={{ width: '100%', marginTop: 10 }}>
