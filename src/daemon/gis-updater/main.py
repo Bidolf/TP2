@@ -130,7 +130,7 @@ def main():
         virtual_host=RABBITMQ_DEFAULT_VHOST,
         credentials=credentials)
 
-    connection = connect_with_retry(parameters, 10, 5)
+    connection = connect_with_retry(parameters, 20, 30)
 
     channel = connection.channel()
 

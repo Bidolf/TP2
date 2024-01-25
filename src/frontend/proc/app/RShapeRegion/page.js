@@ -85,7 +85,7 @@ const ShapeRegionInfo = () => {
               </thead>
               <tbody>
                 {shapeRegionInfoResult.split('<br />').map((line, index) => {
-                  const [fileName, region, ufosSightings] = line.match(/FILE_NAME: (.+), REGION: (.+), UFOS_SIGHTINGS: (.+)/).slice(1);
+                  const [fileName, region, ufosSightings] = line.match(/FILE_NAME: (.+), REGION: (.+), UFO_SIGHTINGS: (.+)/).slice(1);
                   return (
                     <tr key={index}>
                       <td style={{ textAlign: 'center' }}>{fileName}</td>
